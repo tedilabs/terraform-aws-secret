@@ -1,3 +1,5 @@
 # Modules
+":floppy_disk: kms-key":
+- modules/kms-key/**/*
 ":floppy_disk: secrets-manager-secret":
 - modules/secrets-manager-secret/**/*

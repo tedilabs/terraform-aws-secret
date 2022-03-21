@@ -41,5 +41,8 @@
 
 # Modules
 - color: "fbca04"
+  description: "This issue or pull request is related to kms-key module."
+  name: ":floppy_disk: kms-key"
+- color: "fbca04"
   description: "This issue or pull request is related to secrets-manager-secret module."
   name: ":floppy_disk: secrets-manager-secret"
