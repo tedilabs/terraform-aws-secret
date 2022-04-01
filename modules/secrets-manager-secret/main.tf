@@ -61,7 +61,7 @@ locals {
       ? jsonencode(var.value)
       : (var.type == "TEXT" ? tostring(var.value) : null)
     )
-    binary = var.type == "BINARY" ? base64encode(var.value) : null
+    binary = var.type == "BINARY" ? var.value : null
   }
   versions = [
     for version in var.versions :
@@ -72,7 +72,7 @@ locals {
         ? jsonencode(version.value)
         : (var.type == "TEXT" ? tostring(version.value) : null)
       )
-      binary = var.type == "BINARY" ? base64encode(version.value) : null
+      binary = var.type == "BINARY" ? version.value : null
     })
   ]
 }
@@ -83,7 +83,7 @@ resource "aws_secretsmanager_secret_version" "latest" {
   secret_id = aws_secretsmanager_secret.this.arn
 
   secret_string = local.latest.value
-  secret_binary = local.latest.binary
+  secret_binary = try(tostring(local.latest.binary), null)
 
   lifecycle {
     create_before_destroy = true
@@ -99,7 +99,7 @@ resource "aws_secretsmanager_secret_version" "versions" {
   secret_id = aws_secretsmanager_secret.this.arn
 
   secret_string  = each.value.value
-  secret_binary  = each.value.binary
+  secret_binary  = try(tostring(each.value.binary), null)
   version_stages = each.value.labels
 
   lifecycle {
