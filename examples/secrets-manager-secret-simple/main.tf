@@ -15,6 +15,8 @@ module "secret" {
   name        = "app/secrets-manager-secret/simple"
   description = "Managed by Terraform."
 
+  deletion_window_in_days = 7
+
   tags = {
     "project" = "terraform-aws-secret-examples"
   }
