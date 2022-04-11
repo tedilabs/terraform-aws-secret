@@ -44,6 +44,13 @@ variable "versions" {
       alltrue([
         for version in var.versions :
         length(version.labels) > 0
+      ]),
+      alltrue([
+        for version in var.versions :
+        alltrue([
+          for label in version.labels :
+          !contains(["AWSCURRENT", "AWSPENDING", "AWSPREVIOUS"], label)
+        ])
       ])
     ])
     error_message = "Not valid parameters for `versions`."
