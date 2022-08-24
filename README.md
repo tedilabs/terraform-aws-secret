@@ -21,7 +21,7 @@ Terraform Modules from [this package](https://github.com/tedilabs/terraform-aws-
   - Resource Policy for Secret
   - Configuration for Secret Rotation
 - **SSM Parameter Store**
-  - Parameters (Comming soon!)
+  - Parameters
   - Service Settings
 
 
