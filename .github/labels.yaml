@@ -50,5 +50,8 @@
   description: "This issue or pull request is related to ssm-parameter-store-parameter module."
   name: ":floppy_disk: ssm-parameter-store-parameter"
 - color: "fbca04"
+  description: "This issue or pull request is related to ssm-parameter-store-parameter-set module."
+  name: ":floppy_disk: ssm-parameter-store-parameter-set"
+- color: "fbca04"
   description: "This issue or pull request is related to ssm-parameter-store-settings module."
   name: ":floppy_disk: ssm-parameter-store-settings"
