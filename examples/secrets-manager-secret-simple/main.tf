@@ -10,7 +10,7 @@ provider "aws" {
 module "secret" {
   source = "../../modules/secrets-manager-secret"
   # source  = "tedilabs/secret/aws//modules/secrets-manager-secret"
-  # version = "~> 0.2.0"
+  # version = "~> 0.3.0"
 
   name        = "app/secrets-manager-secret/simple"
   description = "Managed by Terraform."

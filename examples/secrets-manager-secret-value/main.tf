@@ -10,7 +10,7 @@ provider "aws" {
 module "secret__text" {
   source = "../../modules/secrets-manager-secret"
   # source  = "tedilabs/secret/aws//modules/secrets-manager-secret"
-  # version = "~> 0.2.0"
+  # version = "~> 0.3.0"
 
   name        = "app/secrets-manager-secret/value/text"
   description = "Managed by Terraform."
@@ -28,7 +28,7 @@ module "secret__text" {
 module "secret__kv" {
   source = "../../modules/secrets-manager-secret"
   # source  = "tedilabs/secret/aws//modules/secrets-manager-secret"
-  # version = "~> 0.2.0"
+  # version = "~> 0.3.0"
 
   name        = "app/secrets-manager-secret/value/kv"
   description = "Managed by Terraform."
@@ -50,7 +50,7 @@ module "secret__kv" {
 module "secret__binary" {
   source = "../../modules/secrets-manager-secret"
   # source  = "tedilabs/secret/aws//modules/secrets-manager-secret"
-  # version = "~> 0.2.0"
+  # version = "~> 0.3.0"
 
   name        = "app/secrets-manager-secret/value/binary"
   description = "Managed by Terraform."
