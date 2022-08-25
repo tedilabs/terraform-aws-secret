@@ -33,6 +33,8 @@ locals {
 ###################################################
 
 resource "aws_ssm_parameter" "this" {
+  count = var.ignore_value_changes ? 0 : 1
+
   name        = var.name
   description = var.description
   tier        = var.tier != null ? local.tiers[var.tier] : null
@@ -58,4 +60,41 @@ resource "aws_ssm_parameter" "this" {
     local.module_tags,
     var.tags,
   )
+}
+
+resource "aws_ssm_parameter" "self" {
+  count = var.ignore_value_changes ? 1 : 0
+
+  name        = var.name
+  description = var.description
+  tier        = var.tier != null ? local.tiers[var.tier] : null
+
+  type            = local.types[var.type]
+  data_type       = var.data_type
+  allowed_pattern = var.allowed_pattern
+
+  insecure_value = var.type == "SECURE_STRING" ? null : var.value
+  value          = var.type == "SECURE_STRING" ? var.secret_value : null
+
+  # BUG: https://github.com/hashicorp/terraform-provider-aws/issues/25335
+  overwrite = true
+
+
+  ## Encryption
+  key_id = var.type == "SECURE_STRING" ? var.kms_key : null
+
+  tags = merge(
+    {
+      "Name" = local.metadata.name
+    },
+    local.module_tags,
+    var.tags,
+  )
+
+  lifecycle {
+    ignore_changes = [
+      value,
+      insecure_value,
+    ]
+  }
 }

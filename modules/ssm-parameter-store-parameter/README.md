@@ -27,6 +27,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_resourcegroups_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/resourcegroups_group) | resource |
+| [aws_ssm_parameter.self](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 
 ## Inputs
@@ -37,6 +38,7 @@ No modules.
 | <a name="input_allowed_pattern"></a> [allowed\_pattern](#input\_allowed\_pattern) | (Optional) A regular expression used to validate the parameter value. For example, for `STRING` types with values restricted to numbers, you can specify `^d+$`. | `string` | `""` | no |
 | <a name="input_data_type"></a> [data\_type](#input\_data\_type) | (Optional) The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ec2:image` for AMI format. Defaults to `text`. | `string` | `"text"` | no |
 | <a name="input_description"></a> [description](#input\_description) | (Optional) The description of the parameter. | `string` | `"Managed by Terraform."` | no |
+| <a name="input_ignore_value_changes"></a> [ignore\_value\_changes](#input\_ignore\_value\_changes) | (Optional) Whether to manage the parameter value with Terraform. Ignore changes of `value` or `secret_value` if true. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_kms_key"></a> [kms\_key](#input\_kms\_key) | (Optional) The ARN or ID of the AWS KMS key to be used to encrypt the parameter value with `SECURE_STRING` type. If you don't specify this value, then Parameter Store defaults to using the AWS account's default KMS key named `aws/ssm`. If the default KMS key with that name doesn't yet exist, then AWS Parameter Store creates it for you automatically the first time. | `string` | `null` | no |
 | <a name="input_module_tags_enabled"></a> [module\_tags\_enabled](#input\_module\_tags\_enabled) | (Optional) Whether to create AWS Resource Tags for the module informations. | `bool` | `true` | no |
 | <a name="input_resource_group_description"></a> [resource\_group\_description](#input\_resource\_group\_description) | (Optional) The description of Resource Group. | `string` | `"Managed by Terraform."` | no |
@@ -59,9 +61,9 @@ No modules.
 | <a name="output_id"></a> [id](#output\_id) | The ID of the parameter. |
 | <a name="output_kms_key"></a> [kms\_key](#output\_kms\_key) | The ARN or ID of the AWS KMS key which is used to encrypt the parameter value. |
 | <a name="output_name"></a> [name](#output\_name) | The name of the parameter. |
-| <a name="output_secret_value"></a> [secret\_value](#output\_secret\_value) | The secure value of the parameter. This argument is valid with a type of `SECURE_STRING`. |
+| <a name="output_secret_value"></a> [secret\_value](#output\_secret\_value) | The secure value of the parameter. argument is valid with a type of `SECURE_STRING`. |
 | <a name="output_tier"></a> [tier](#output\_tier) | The tier of the parameter. |
 | <a name="output_type"></a> [type](#output\_type) | The type of the parameter. |
-| <a name="output_value"></a> [value](#output\_value) | The value of the parameter. This argument is not valid with a type of `SECURE_STRING`. |
+| <a name="output_value"></a> [value](#output\_value) | The value of the parameter. argument is not valid with a type of `SECURE_STRING`. |
 | <a name="output_version"></a> [version](#output\_version) | The current version of the parameter. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
