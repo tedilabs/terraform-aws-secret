@@ -26,8 +26,8 @@ output "type" {
 output "value" {
   description = "The secret value in the current version of the secret with `AWSCURRENT` staging label."
   value = try(coalesce(
-    one(aws_secretsmanager_secret_version.latest.*.secret_string),
-    one(aws_secretsmanager_secret_version.latest.*.secret_binary),
+    one(aws_secretsmanager_secret_version.latest[*].secret_string),
+    one(aws_secretsmanager_secret_version.latest[*].secret_binary),
   ), null)
 }
 
@@ -64,7 +64,7 @@ output "rotation" {
   description = "The configuration of the automatic rotation for the secret."
   value = {
     enabled          = var.rotation_lambda_function != null
-    lambda_function  = one(aws_secretsmanager_secret_rotation.this.*.rotation_lambda_arn)
+    lambda_function  = one(aws_secretsmanager_secret_rotation.this[*].rotation_lambda_arn)
     duration_in_days = var.rotation_duration_in_days
   }
 }
