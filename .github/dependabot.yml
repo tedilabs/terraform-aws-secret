@@ -1,6 +1,16 @@
 version: 2
 updates:
-- package-ecosystem: "github-actions"
-  directory: "/"
+- package-ecosystem: github-actions
+  directory: /
   schedule:
-    interval: "daily"
+    interval: daily
+
+- package-ecosystem: terraform
+  directories:
+  - /modules/kms-key
+  - /modules/secrets-manager-secret
+  - /modules/ssm-parameter-store-parameter
+  - /modules/ssm-parameter-store-parameter-set
+  - /modules/ssm-parameter-store-settings
+  schedule:
+    interval: weekly
