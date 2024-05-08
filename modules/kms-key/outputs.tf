@@ -13,8 +13,23 @@ output "name" {
   value       = var.name
 }
 
+output "description" {
+  description = "The description of the KMS key."
+  value       = aws_kms_key.this.description
+}
+
+output "enabled" {
+  description = "Whether the key is enabled."
+  value       = aws_kms_key.this.is_enabled
+}
+
+output "deletion_window_in_days" {
+  description = "Duration in days after which the key is deleted after destruction of the resource."
+  value       = aws_kms_key.this.deletion_window_in_days
+}
+
 output "usage" {
-  description = "The usage of the KMS key. `ENCRYPT_DECRYPT` or `SIGN_VERIFY`."
+  description = "The usage of the KMS key."
   value       = aws_kms_key.this.key_usage
 }
 
@@ -25,22 +40,17 @@ output "spec" {
 
 output "policy" {
   description = "The Resource Policy for KMS Key."
-  value       = aws_kms_key.this.policy
+  value       = one(aws_kms_key_policy.this[*].policy)
 }
 
-output "bypass_policy_lockout_safety_check" {
-  description = "Whether to disable the policy lockout check performed when creating or updating the key's policy."
-  value       = aws_kms_key.this.bypass_policy_lockout_safety_check
+output "custom_key_store" {
+  description = "The ID of the KMS Custom Key Store where the key will be stored instead of KMS."
+  value       = aws_kms_key.this.custom_key_store_id
 }
 
-output "deletion_window_in_days" {
-  description = "Duration in days after which the key is deleted after destruction of the resource."
-  value       = aws_kms_key.this.deletion_window_in_days
-}
-
-output "enabled" {
-  description = "Whether the key is enabled."
-  value       = aws_kms_key.this.is_enabled
+output "xks_key" {
+  description = "The ID of the external key that serves as key material for the KMS key in an external key store."
+  value       = aws_kms_key.this.xks_key_id
 }
 
 output "key_rotation_enabled" {
