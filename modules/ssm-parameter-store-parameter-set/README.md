@@ -9,36 +9,32 @@ This module creates following resources.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.22 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.43 |
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.19.0 |
+No providers.
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | tedilabs/misc/aws//modules/resource-group | ~> 0.10.0 |
+| <a name="module_this"></a> [this](#module\_this) | ../ssm-parameter-store-parameter | n/a |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [aws_ssm_parameter.self](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
-| [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
+No resources.
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_parameters"></a> [parameters](#input\_parameters) | (Required) A list of parameters to manage in the parameter set. Each value of `parameters` block as defined below.<br>    (Required) `name` - The name of the parameter. This is concatenated with the `path` of the parameter set for the id. The name should begin with slash (/) and end without trailing slash.<br>    (Optional) `description` - The description of the parameter.<br>    (Optional) `tier` - The parameter tier to assign to the parameter. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`.<br>    (Optional) `type` - The intended type of the parameter. Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`.<br>    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ec2:image` for AMI format.<br>    (Optional) `allowed_pattern` - A regular expression used to validate the parameter value.<br>    (Required) `value` - The value of the parameter. | `list(map(string))` | n/a | yes |
+| <a name="input_parameters"></a> [parameters](#input\_parameters) | (Required) A list of parameters to manage in the parameter set. Each value of `parameters` block as defined below.<br>    (Required) `name` - The name of the parameter. This is concatenated with the `path` of the parameter set for the id. The name should begin with slash (/) and end without trailing slash.<br>    (Optional) `description` - The description of the parameter.<br>    (Optional) `tier` - The parameter tier to assign to the parameter. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`.<br>    (Optional) `type` - The intended type of the parameter. Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`.<br>    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format.<br>    (Optional) `allowed_pattern` - A regular expression used to validate the parameter value.<br>    (Required) `value` - The value of the parameter. | <pre>list(object({<br>    name            = string<br>    description     = optional(string)<br>    tier            = optional(string)<br>    type            = optional(string)<br>    data_type       = optional(string)<br>    allowed_pattern = optional(string)<br>    value           = string<br>  }))</pre> | n/a | yes |
 | <a name="input_path"></a> [path](#input\_path) | (Required) A path used for the prefix of each parameter name created by this parameter set. The path should begin with slash (/) and end without trailing slash. | `string` | n/a | yes |
 | <a name="input_allowed_pattern"></a> [allowed\_pattern](#input\_allowed\_pattern) | (Optional) The default regular expression used to validate each parameter value in the parameter set. This is only used when a specific pattern for the parameter is not provided. For example, for `STRING` types with values restricted to numbers, you can specify `^d+$`. | `string` | `""` | no |
-| <a name="input_data_type"></a> [data\_type](#input\_data\_type) | (Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ec2:image` for AMI format. Defaults to `text`. | `string` | `"text"` | no |
+| <a name="input_data_type"></a> [data\_type](#input\_data\_type) | (Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format. Defaults to `text`. `aws:ssm:integration` data\_type parameters must be of the type `SECURE_STRING` and the name must start with the prefix `/d9d01087-4a3f-49e0-b0b4-d568d7826553/ssm/integrations/webhook/`. | `string` | `"text"` | no |
 | <a name="input_description"></a> [description](#input\_description) | (Optional) The default description of parameters in the parameter set. This is only used when a specific description of the parameter is not provided. | `string` | `"Managed by Terraform."` | no |
 | <a name="input_ignore_value_changes"></a> [ignore\_value\_changes](#input\_ignore\_value\_changes) | (Optional) Whether to manage the parameter value with Terraform. Ignore changes of `value` or `secret_value` if true. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_module_tags_enabled"></a> [module\_tags\_enabled](#input\_module\_tags\_enabled) | (Optional) Whether to create AWS Resource Tags for the module informations. | `bool` | `true` | no |

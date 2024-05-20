@@ -1,7 +1,3 @@
-locals {
-  parameter_set = var.ignore_value_changes ? aws_ssm_parameter.self : aws_ssm_parameter.this
-}
-
 output "path" {
   description = "The path used for the prefix of each parameter names managed by this parameter set."
   value       = var.path
@@ -10,7 +6,7 @@ output "path" {
 output "parameters" {
   description = "The list of parameters in the parameter set."
   value = {
-    for name, parameter in local.parameter_set :
+    for name, parameter in module.this :
     name => {
       id          = parameter.id
       arn         = parameter.arn

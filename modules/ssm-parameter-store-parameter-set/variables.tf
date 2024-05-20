@@ -1,6 +1,7 @@
 variable "path" {
   description = "(Required) A path used for the prefix of each parameter name created by this parameter set. The path should begin with slash (/) and end without trailing slash."
   type        = string
+  nullable    = false
 
   validation {
     condition = alltrue([
@@ -43,14 +44,14 @@ variable "type" {
 }
 
 variable "data_type" {
-  description = "(Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ec2:image` for AMI format. Defaults to `text`."
+  description = "(Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format. Defaults to `text`. `aws:ssm:integration` data_type parameters must be of the type `SECURE_STRING` and the name must start with the prefix `/d9d01087-4a3f-49e0-b0b4-d568d7826553/ssm/integrations/webhook/`."
   type        = string
   default     = "text"
   nullable    = false
 
   validation {
-    condition     = contains(["text", "aws:ec2:image"], var.data_type)
-    error_message = "Valid values are `text`, `aws:ec2:image`."
+    condition     = contains(["text", "aws:ssm:integration", "aws:ec2:image"], var.data_type)
+    error_message = "Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image`."
   }
 }
 
@@ -68,12 +69,20 @@ variable "parameters" {
     (Optional) `description` - The description of the parameter.
     (Optional) `tier` - The parameter tier to assign to the parameter. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`.
     (Optional) `type` - The intended type of the parameter. Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`.
-    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ec2:image` for AMI format.
+    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format.
     (Optional) `allowed_pattern` - A regular expression used to validate the parameter value.
     (Required) `value` - The value of the parameter.
   EOF
-  type        = list(map(string))
-  nullable    = false
+  type = list(object({
+    name            = string
+    description     = optional(string)
+    tier            = optional(string)
+    type            = optional(string)
+    data_type       = optional(string)
+    allowed_pattern = optional(string)
+    value           = string
+  }))
+  nullable = false
 
   validation {
     condition = alltrue([
@@ -90,7 +99,7 @@ variable "parameters" {
     condition = alltrue([
       for parameter in var.parameters :
       contains(["STANDARD", "ADVANCED", "INTELLIGENT_TIERING"], parameter.tier)
-      if try(parameter.tier, null) != null
+      if parameter.tier != null
     ])
     error_message = "Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`."
   }
@@ -99,7 +108,7 @@ variable "parameters" {
     condition = alltrue([
       for parameter in var.parameters :
       contains(["STRING", "STRING_LIST"], parameter.type)
-      if try(parameter.type, null) != null
+      if parameter.type != null
     ])
     error_message = "Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`."
   }
@@ -107,18 +116,10 @@ variable "parameters" {
   validation {
     condition = alltrue([
       for parameter in var.parameters :
-      contains(["text", "aws:ec2:image"], parameter.data_type)
-      if try(parameter.data_type, null) != null
+      contains(["text", "aws:ssm:integration", "aws:ec2:image"], parameter.data_type)
+      if parameter.data_type != null
     ])
-    error_message = "Valid values are `text`, `aws:ec2:image`."
-  }
-
-  validation {
-    condition = alltrue([
-      for parameter in var.parameters :
-      can(parameter.value)
-    ])
-    error_message = "The value for `value` is required."
+    error_message = "Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image`."
   }
 }
 
