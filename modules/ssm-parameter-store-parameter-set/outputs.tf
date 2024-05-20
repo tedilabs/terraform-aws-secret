@@ -18,7 +18,7 @@ output "parameters" {
       data_type       = parameter.data_type
       allowed_pattern = parameter.allowed_pattern
 
-      value   = parameter.insecure_value
+      value   = parameter.value
       version = parameter.version
     }
   }
