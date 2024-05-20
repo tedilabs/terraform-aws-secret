@@ -1,6 +1,7 @@
 variable "name" {
   description = "(Required) Friendly name of the new parameter. If the name contains a path (e.g., any forward slashes (/)), it must be fully qualified with a leading forward slash (/)."
   type        = string
+  nullable    = false
 }
 
 variable "description" {
@@ -14,6 +15,7 @@ variable "tier" {
   description = "(Optional) The parameter tier to assign to the parameter. If not specified, will use the default parameter tier for the region. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`."
   type        = string
   default     = null
+  nullable    = true
 
   validation {
     condition = (var.tier != null
@@ -37,14 +39,14 @@ variable "type" {
 }
 
 variable "data_type" {
-  description = "(Optional) The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ec2:image` for AMI format. Defaults to `text`."
+  description = "(Optional) The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format. Defaults to `text`. `aws:ssm:integration` data_type parameters must be of the type `SECURE_STRING` and the name must start with the prefix `/d9d01087-4a3f-49e0-b0b4-d568d7826553/ssm/integrations/webhook/`."
   type        = string
   default     = "text"
   nullable    = false
 
   validation {
-    condition     = contains(["text", "aws:ec2:image"], var.data_type)
-    error_message = "Valid values are `text`, `aws:ec2:image`."
+    condition     = contains(["text", "aws:ssm:integration", "aws:ec2:image"], var.data_type)
+    error_message = "Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image`."
   }
 }
 

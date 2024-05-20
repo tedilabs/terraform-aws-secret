@@ -32,6 +32,8 @@ locals {
 # Parameter on Systems Manager Parameter Store
 ###################################################
 
+# INFO: Deprecated attributes
+# - `overwrite`
 resource "aws_ssm_parameter" "this" {
   count = var.ignore_value_changes ? 0 : 1
 
@@ -46,9 +48,6 @@ resource "aws_ssm_parameter" "this" {
   insecure_value = var.type == "SECURE_STRING" ? null : var.value
   value          = var.type == "SECURE_STRING" ? var.secret_value : null
 
-  # BUG: https://github.com/hashicorp/terraform-provider-aws/issues/25335
-  overwrite = true
-
 
   ## Encryption
   key_id = var.type == "SECURE_STRING" ? var.kms_key : null
@@ -62,6 +61,8 @@ resource "aws_ssm_parameter" "this" {
   )
 }
 
+# INFO: Deprecated attributes
+# - `overwrite`
 resource "aws_ssm_parameter" "self" {
   count = var.ignore_value_changes ? 1 : 0
 
@@ -75,9 +76,6 @@ resource "aws_ssm_parameter" "self" {
 
   insecure_value = var.type == "SECURE_STRING" ? null : var.value
   value          = var.type == "SECURE_STRING" ? var.secret_value : null
-
-  # BUG: https://github.com/hashicorp/terraform-provider-aws/issues/25335
-  overwrite = true
 
 
   ## Encryption
