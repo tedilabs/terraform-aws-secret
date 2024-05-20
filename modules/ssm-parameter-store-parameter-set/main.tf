@@ -31,9 +31,12 @@ module "this" {
   description = coalesce(each.value.description, var.description)
   tier        = coalesce(each.value.tier, var.tier)
 
-  type            = coalesce(each.value.type, var.type)
-  data_type       = coalesce(each.value.data_type, var.data_type)
-  allowed_pattern = coalesce(each.value.allowed_pattern, var.allowed_pattern)
+  type      = coalesce(each.value.type, var.type)
+  data_type = coalesce(each.value.data_type, var.data_type)
+  allowed_pattern = (each.value.allowed_pattern != null
+    ? each.value.allowed_pattern
+    : var.allowed_pattern
+  )
 
   ignore_value_changes = var.ignore_value_changes
   value                = each.value.value
