@@ -19,12 +19,14 @@ locals {
 # Secrets Manager Secret
 ###################################################
 
+# INFO: Use a separate resource
+# - 'policy'
+# INFO: Not supported attributes
+# - `name_prefix`
 resource "aws_secretsmanager_secret" "this" {
   name        = var.name
   description = var.description
 
-  # Use `aws_secretsmanager_policy` instead
-  policy                         = null
   kms_key_id                     = var.kms_key
   recovery_window_in_days        = var.deletion_window_in_days
   force_overwrite_replica_secret = var.overwrite_in_replicas
@@ -127,12 +129,17 @@ resource "aws_secretsmanager_secret_policy" "this" {
 ###################################################
 
 resource "aws_secretsmanager_secret_rotation" "this" {
-  count = var.rotation_lambda_function != null ? 1 : 0
+  count = var.rotation.enabled ? 1 : 0
 
-  secret_id           = aws_secretsmanager_secret.this.id
-  rotation_lambda_arn = var.rotation_lambda_function
+  secret_id = aws_secretsmanager_secret.this.id
+
+  rotate_immediately  = var.rotation.rotate_immediately
+  rotation_lambda_arn = var.rotation.lambda_function
 
   rotation_rules {
-    automatically_after_days = var.rotation_duration_in_days
+    automatically_after_days = var.rotation.schedule_frequency
+    schedule_expression      = var.rotation.schedule_expression
+
+    duration = var.rotation.duration != null ? "${var.rotation.duration}h" : null
   }
 }

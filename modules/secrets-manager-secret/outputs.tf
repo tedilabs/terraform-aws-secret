@@ -63,9 +63,12 @@ output "deletion_window_in_days" {
 output "rotation" {
   description = "The configuration of the automatic rotation for the secret."
   value = {
-    enabled          = var.rotation_lambda_function != null
-    lambda_function  = one(aws_secretsmanager_secret_rotation.this[*].rotation_lambda_arn)
-    duration_in_days = var.rotation_duration_in_days
+    enabled         = var.rotation.enabled
+    lambda_function = one(aws_secretsmanager_secret_rotation.this[*].rotation_lambda_arn)
+
+    schedule_frequency  = var.rotation.schedule_frequency
+    schedule_expression = one(aws_secretsmanager_secret_rotation.this[*].rotation_rules[0].schedule_expression)
+    duration_in_days    = var.rotation.duration
   }
 }
 
@@ -86,3 +89,11 @@ output "overwrite_in_replicas" {
   description = "Whether to overwrite a secret with the same name in the destination region during replication."
   value       = aws_secretsmanager_secret.this.force_overwrite_replica_secret
 }
+
+# output "debug" {
+#   value = {
+#     for k, v in aws_secretsmanager_secret.this :
+#     k => v
+#     if !contains(["tags", "tags_all", "policy", "id", "arn", "name", "description", "kms_key_id", "recovery_window_in_days", "force_overwrite_replica_secret", "name_prefix", "replica"], k)
+#   }
+# }

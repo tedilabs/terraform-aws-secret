@@ -1,6 +1,7 @@
 variable "name" {
   description = "(Required) Friendly name of the new secret. The secret name can consist of uppercase letters, lowercase letters, digits, and any of the following characters: `/_+=.@-`."
   type        = string
+  nullable    = false
 }
 
 variable "description" {
@@ -26,6 +27,7 @@ variable "value" {
   description = "(Optional) The secret value that you want to encrypt and store in the current version of the secret. Specify plaintext data with `string` type if `type` is `TEXT`. Specify key-value data with `map` type if `type` is `KEY_VALUE`. Specify binary data with `string` type if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
   type        = any
   default     = null
+  nullable    = true
 }
 
 variable "versions" {
@@ -64,18 +66,20 @@ variable "kms_key" {
   description = "(Optional) The ARN or Id of the AWS KMS key to be used to encrypt the secret values in this secret. If you don't specify this value, then Secrets Manager defaults to using the AWS account's default KMS key named `aws/secretsmanager`. If the default KMS key with that name doesn't yet exist, then AWS Secrets Manager creates it for you automatically the first time."
   type        = string
   default     = null
+  nullable    = true
 }
 
 variable "policy" {
   description = "(Optional) A valid JSON document representing a resource policy."
   type        = string
   default     = null
+  nullable    = true
 }
 
 variable "block_public_policy" {
-  description = "(Optional) Whether to reject calls to PUT a resource policy if the policy allows public access."
+  description = "(Optional) Whether to reject calls to PUT a resource policy if the policy allows public access. Defaults to `true`."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
@@ -100,28 +104,49 @@ variable "replicas" {
     (Required) `region` - The region for replicating the secret.
     (Optional) `kms_key` - The ARN, Key ID, or Alias of the AWS KMS key within the region secret is replicated to. If one is not specified, then Secrets Manager defaults to using the AWS account's default KMS key named `aws/secretsmanager` in the region. If the default KMS key with that name doesn't yet exist, then AWS Secrets Manager creates it for you automatically the first time.
   EOF
-  type        = list(map(string))
-  default     = []
-  nullable    = false
+  type = list(object({
+    region  = string
+    kms_key = optional(string)
+  }))
+  default  = []
+  nullable = false
 }
 
 variable "overwrite_in_replicas" {
-  description = "(Optional) Whether to overwrite a secret with the same name in the destination region during replication."
+  description = "(Optional) Whether to overwrite a secret with the same name in the destination region during replication. Defaults to `false`."
   type        = bool
   default     = false
   nullable    = false
 }
 
-variable "rotation_lambda_function" {
-  description = "(Optional) The ARN of the Lambda function that can rotate the secret."
-  type        = string
-  default     = null
-}
+variable "rotation" {
+  description = <<EOF
+  (Optional) A rotation configurations of the Secrets Manager secret. `rotation` block as defined below.
+    (Optional) `enabled` - Whether to enable automatic rotation of the secret. Defaults to `false`.
+    (Optionial) `rotate_immediately` - Whether to rotate the secret immediately or wait until the next scheduled rotation window. The rotation schedule is defined in rotation_rules. For secrets that use a Lambda rotation function to rotate, if you don't immediately rotate the secret, Secrets Manager tests the rotation configuration by running the testSecret step. Defaults to `true`.
+    (Optional) `lambda_function` - The ARN of the Lambda function that can rotate the secret.
+    (Optional) `schedule_frequency` - The number of days between automatic scheduled rotations of the secret. Either `schedule_frequency` or `schedule_expression` must be specified.
+    (Optional) `schedule_expression` - A cron expression such as `cron(a b c d e f)` or a rate expression such as `rate(10 days)`. Either `schedule_frequency` or `schedule_expression` must be specified.
+    (Optional) `duration` - The length of the rotation window in hours.
+  EOF
+  type = object({
+    enabled             = optional(bool, false)
+    rotate_immediately  = optional(bool, true)
+    lambda_function     = optional(string)
+    schedule_frequency  = optional(number)
+    schedule_expression = optional(string)
+    duration            = optional(number)
+  })
+  default  = {}
+  nullable = false
 
-variable "rotation_duration_in_days" {
-  description = "(Optional) The number of days between automatic scheduled rotations of the secret. Required if `rotation_lambda_function` is configured."
-  type        = number
-  default     = null
+  validation {
+    condition = anytrue([
+      var.rotation.duration == null,
+      var.rotation.duration != null && coalesce(var.rotation.duration, 0) > 0,
+    ])
+    error_message = "Valid value for `duration` is greater than `0`."
+  }
 }
 
 variable "tags" {
