@@ -1,11 +1,25 @@
 # Modules
 ":floppy_disk: kms-key":
-- modules/kms-key/**/*
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/kms-key/**/*
+
 ":floppy_disk: secrets-manager-secret":
-- modules/secrets-manager-secret/**/*
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/secrets-manager-secret/**/*
+
 ":floppy_disk: ssm-parameter-store-parameter":
-- modules/ssm-parameter-store-parameter/**/*
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/ssm-parameter-store-parameter/**/*
+
 ":floppy_disk: ssm-parameter-store-parameter-set":
-- modules/ssm-parameter-store-parameter-set/**/*
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/ssm-parameter-store-parameter-set/**/*
+
 ":floppy_disk: ssm-parameter-store-settings":
-- modules/ssm-parameter-store-settings/**/*
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/ssm-parameter-store-settings/**/*
