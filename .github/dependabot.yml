@@ -7,10 +7,6 @@ updates:
 
 - package-ecosystem: terraform
   directories:
-  - /modules/kms-key
-  - /modules/secrets-manager-secret
-  - /modules/ssm-parameter-store-parameter
-  - /modules/ssm-parameter-store-parameter-set
-  - /modules/ssm-parameter-store-settings
+  - /modules/*
   schedule:
     interval: weekly
