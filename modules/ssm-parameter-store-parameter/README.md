@@ -4,7 +4,7 @@ This module creates following resources.
 
 - `aws_ssm_parameter`
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -67,4 +67,4 @@ This module creates following resources.
 | <a name="output_type"></a> [type](#output\_type) | The type of the parameter. |
 | <a name="output_value"></a> [value](#output\_value) | The value of the parameter. argument is not valid with a type of `SECURE_STRING`. |
 | <a name="output_version"></a> [version](#output\_version) | The current version of the parameter. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

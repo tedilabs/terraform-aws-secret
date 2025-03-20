@@ -4,7 +4,7 @@ This module creates following resources.
 
 - `aws_ssm_parameter`
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -51,4 +51,4 @@ No resources.
 |------|-------------|
 | <a name="output_parameters"></a> [parameters](#output\_parameters) | The list of parameters in the parameter set. |
 | <a name="output_path"></a> [path](#output\_path) | The path used for the prefix of each parameter names managed by this parameter set. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

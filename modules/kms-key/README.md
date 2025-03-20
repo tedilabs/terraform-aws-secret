@@ -7,7 +7,7 @@ This module creates following resources.
 - `aws_kms_alias` (optional)
 - `aws_kms_grant` (optional)
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -76,4 +76,4 @@ This module creates following resources.
 | <a name="output_spec"></a> [spec](#output\_spec) | The specification of KMS key which is the encryption algorithm or signing algorithm. |
 | <a name="output_usage"></a> [usage](#output\_usage) | The usage of the KMS key. |
 | <a name="output_xks_key"></a> [xks\_key](#output\_xks\_key) | The ID of the external key that serves as key material for the KMS key in an external key store. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

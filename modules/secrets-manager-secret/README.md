@@ -7,7 +7,7 @@ This module creates following resources.
 - `aws_secretsmanager_secret_rotation` (optional)
 - `aws_secretsmanager_secret_version` (optional)
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -76,4 +76,4 @@ This module creates following resources.
 | <a name="output_type"></a> [type](#output\_type) | The type of the secret. |
 | <a name="output_value"></a> [value](#output\_value) | The secret value in the current version of the secret with `AWSCURRENT` staging label. |
 | <a name="output_versions"></a> [versions](#output\_versions) | A list of versions other than the current version of the secret. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

@@ -4,7 +4,7 @@ This module creates following resources.
 
 - `aws_ssm_service_setting`
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -43,4 +43,4 @@ No modules.
 |------|-------------|
 | <a name="output_default_parameter_tier"></a> [default\_parameter\_tier](#output\_default\_parameter\_tier) | The parameter tier to use by default when a request to create or update a parameter does not specify a tier. |
 | <a name="output_high_throughput_enabled"></a> [high\_throughput\_enabled](#output\_high\_throughput\_enabled) | Whether to increase Parameter Store throughput. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
