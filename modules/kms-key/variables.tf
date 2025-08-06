@@ -41,19 +41,19 @@ variable "deletion_window_in_days" {
 }
 
 variable "usage" {
-  description = "(Optional) Specifies the intended use of the key. Valid values are `ENCRYPT_DECRYPT`, `SIGN_VERIFY`, or `GENERATE_VERIFY_MAC`. Defaults to `ENCRYPT_DECRYPT`."
+  description = "(Optional) Specifies the intended use of the key. Valid values are `ENCRYPT_DECRYPT`, `SIGN_VERIFY`, `GENERATE_VERIFY_MAC`, `KEY_AGREEMENT`. Defaults to `ENCRYPT_DECRYPT`."
   type        = string
   default     = "ENCRYPT_DECRYPT"
   nullable    = false
 
   validation {
-    condition     = contains(["ENCRYPT_DECRYPT", "SIGN_VERIFY", "GENERATE_VERIFY_MAC"], var.usage)
-    error_message = "Valid values are `ENCRYPT_DECRYPT`, `SIGN_VERIFY`, or `GENERATE_VERIFY_MAC`."
+    condition     = contains(["ENCRYPT_DECRYPT", "SIGN_VERIFY", "GENERATE_VERIFY_MAC", "KEY_AGREEMENT"], var.usage)
+    error_message = "Valid values are `ENCRYPT_DECRYPT`, `SIGN_VERIFY`, `GENERATE_VERIFY_MAC`, or `KEY_AGREEMENT`."
   }
 }
 
 variable "spec" {
-  description = "(Optional) Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports. Valid values: `SYMMETRIC_DEFAULT`, `RSA_2048`, `RSA_3072`, `RSA_4096`, `HMAC_256`, `ECC_NIST_P256`, `ECC_NIST_P384`, `ECC_NIST_P521`, or `ECC_SECG_P256K1`. Defaults to `SYMMETRIC_DEFAULT`."
+  description = "(Optional) Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports. Valid values: `SYMMETRIC_DEFAULT`, `RSA_2048`, `RSA_3072`, `RSA_4096`, `HMAC_224`, `HMAC_256`, `HMAC_384`, `HMAC_512`, `ECC_NIST_P256`, `ECC_NIST_P384`, `ECC_NIST_P521`, `ECC_SECG_P256K1`, `ML_DSA_44`, `ML_DSA_65`, `ML_DSA_87`, or `SM2` (China Regions Only). Defaults to `SYMMETRIC_DEFAULT`."
   type        = string
   default     = "SYMMETRIC_DEFAULT"
   nullable    = false
@@ -64,14 +64,70 @@ variable "spec" {
       "RSA_2048",
       "RSA_3072",
       "RSA_4096",
+      "HMAC_224",
       "HMAC_256",
+      "HMAC_384",
+      "HMAC_512",
       "ECC_NIST_P256",
       "ECC_NIST_P384",
       "ECC_NIST_P521",
       "ECC_SECG_P256K1",
+      "ML_DSA_44",
+      "ML_DSA_65",
+      "ML_DSA_87",
+      "SM2",
     ], var.spec)
-    error_message = "Valid values for `spec` are `SYMMETRIC_DEFAULT`, `RSA_2048`, `RSA_3072`, `RSA_4096`, `HMAC_256`, `ECC_NIST_P256`, `ECC_NIST_P384`, `ECC_NIST_P521`, or `ECC_SECG_P256K1`."
+    error_message = "Valid values for `spec` are `SYMMETRIC_DEFAULT`, `RSA_2048`, `RSA_3072`, `RSA_4096`, `HMAC_224`, `HMAC_256`, `HMAC_384`, `HMAC_512`, `ECC_NIST_P256`, `ECC_NIST_P384`, `ECC_NIST_P521`, `ECC_SECG_P256K1`, `ML_DSA_44`, `ML_DSA_65`, `ML_DSA_87`, or `SM2` (China Regions Only)."
   }
+}
+
+variable "key_rotation" {
+  description = <<EOF
+  (Optional) A configuration for key rotation of the KMS key. This configuration is only applicable for symmetric encryption KMS keys. `key_rotation` block as defined below.
+    (Optional) `enabled` - Whether key rotation is enabled. Defaults to `false`.
+    (Optional) `period_in_days` - The custom period of t ime between each key rotation. Valid value is between `90` and `2560` days (inclusive). Defaults to `365`.
+  EOF
+  type = object({
+    enabled        = optional(bool, false)
+    period_in_days = optional(number, 365)
+  })
+  default  = {}
+  nullable = false
+
+  validation {
+    condition = alltrue([
+      var.key_rotation.period_in_days >= 90,
+      var.key_rotation.period_in_days <= 2560,
+    ])
+    error_message = "Valid value for `period_in_days` is between `90` and `2560` days (inclusive)."
+  }
+}
+
+variable "predefined_roles" {
+  description = <<EOF
+  (Optional) A configuration for predefined roles of the KMS key. This configuration will be merged with given `policy` if it is defined. `predefined_roles` block as defined below.
+    (Optional) `owners` - A set of AWS principals that are allowed to perform all key operations.
+    (Optional) `administrators` - A set of AWS principals that are allowed to perform all key administrative operations.
+    (Optional) `users` - A set of AWS principals that are allowed to use the key for encryption and decryption operations.
+    (Optional) `service_users` - A set of AWS principals that are allowed to use the key for service integration operations.
+    (Optional) `symmetric_encryption` - A set of AWS principals that are allowed to use the key for symmetric encryption operations.
+    (Optional) `asymmetric_encryption` - A set of AWS principals that are allowed to use the key for asymmetric encryption operations.
+    (Optional) `asymmetric_signing` - A set of AWS principals that are allowed to use the key for asymmetric signing operations.
+    (Optional) `hmac` - A set of AWS principals that are allowed to use the key for HMAC operations.
+  EOF
+  type = object({
+    owners         = optional(set(string), [])
+    administrators = optional(set(string), [])
+    users          = optional(set(string), [])
+    service_users  = optional(set(string), [])
+
+    symmetric_encryption  = optional(set(string), [])
+    asymmetric_encryption = optional(set(string), [])
+    asymmetric_signing    = optional(set(string), [])
+    hmac                  = optional(set(string), [])
+  })
+  default  = {}
+  nullable = false
 }
 
 variable "policy" {
@@ -100,13 +156,6 @@ variable "xks_key" {
   type        = string
   default     = null
   nullable    = true
-}
-
-variable "key_rotation_enabled" {
-  description = "(Optional) Indicates whether key rotation is enabled. Defaults to `false`."
-  type        = bool
-  default     = false
-  nullable    = false
 }
 
 variable "multi_region_enabled" {

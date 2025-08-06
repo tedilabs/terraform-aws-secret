@@ -30,10 +30,15 @@ resource "aws_kms_key" "this" {
   key_usage                = var.usage
   customer_master_key_spec = var.spec
 
+  enable_key_rotation = var.key_rotation.enabled
+  rotation_period_in_days = (var.key_rotation.enabled
+    ? var.key_rotation.period_in_days
+    : null
+  )
+
   custom_key_store_id = var.custom_key_store
   xks_key_id          = var.xks_key
   multi_region        = var.multi_region_enabled
-  enable_key_rotation = var.key_rotation_enabled
 
   tags = merge(
     {
@@ -52,23 +57,11 @@ resource "aws_kms_key" "this" {
 # Provides an alias for a KMS customer master key.
 # AWS Console enforces 1-to-1 mapping between aliases & keys,
 # but API allows you to create as many aliases as the account limits.
+# INFO: Not supported attributes:
+# - `name_prefix`
 resource "aws_kms_alias" "this" {
   for_each = var.aliases
 
   target_key_id = aws_kms_key.this.key_id
   name          = each.key
-}
-
-
-###################################################
-# Key Policy for Customer Managed Key
-###################################################
-
-resource "aws_kms_key_policy" "this" {
-  count = var.policy != null ? 1 : 0
-
-  key_id = aws_kms_key.this.key_id
-
-  policy                             = var.policy
-  bypass_policy_lockout_safety_check = var.bypass_policy_lockout_safety_check
 }

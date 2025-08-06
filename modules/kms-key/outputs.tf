@@ -38,6 +38,19 @@ output "spec" {
   value       = aws_kms_key.this.customer_master_key_spec
 }
 
+output "key_rotation" {
+  description = "The key rotation configuration of the KMS key."
+  value = {
+    enabled        = aws_kms_key.this.enable_key_rotation
+    period_in_days = aws_kms_key.this.rotation_period_in_days
+  }
+}
+
+output "predefined_roles" {
+  description = "The predefined roles that have access to the KMS key."
+  value       = var.predefined_roles
+}
+
 output "policy" {
   description = "The Resource Policy for KMS Key."
   value       = one(aws_kms_key_policy.this[*].policy)
@@ -51,11 +64,6 @@ output "custom_key_store" {
 output "xks_key" {
   description = "The ID of the external key that serves as key material for the KMS key in an external key store."
   value       = aws_kms_key.this.xks_key_id
-}
-
-output "key_rotation_enabled" {
-  description = "Whether the key rotation is enabled."
-  value       = aws_kms_key.this.enable_key_rotation
 }
 
 output "multi_region_enabled" {
@@ -73,3 +81,13 @@ output "aliases" {
     }
   }
 }
+
+# output "debug" {
+#   value = {
+#     key = {
+#       for k, v in aws_kms_key.this :
+#       k => v
+#       if !contains(["key_id", "arn", "description", "is_enabled", "deletion_window_in_days", "key_usage", "customer_master_key_spec", "enable_key_rotation", "rotation_period_in_days", "custom_key_store_id", "xks_key_id", "multi_region", "tags", "tags_all", "id", "timeouts", "policy", "bypass_policy_lockout_safety_check"], k)
+#     }
+#   }
+# }
