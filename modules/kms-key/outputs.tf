@@ -1,3 +1,18 @@
+locals {
+  grants = {
+    for grant in var.grants :
+    grant.name => {
+      id                 = aws_kms_grant.this[grant.name].grant_id
+      name               = aws_kms_grant.this[grant.name].name
+      grantee_principal  = aws_kms_grant.this[grant.name].grantee_principal
+      operations         = aws_kms_grant.this[grant.name].operations
+      retiring_principal = aws_kms_grant.this[grant.name].retiring_principal
+
+      constraints = grant.constraints
+    }
+  }
+}
+
 output "arn" {
   description = "The ARN of the KMS key."
   value       = aws_kms_key.this.arn
@@ -46,6 +61,15 @@ output "key_rotation" {
   }
 }
 
+# NOTE: `grant_token` is intentionally not included in outputs because :
+# - Grant tokens are only returned during grant creation and cannot be retrieved afterwards
+# - Since Terraform-managed grants are created during infrastructure provisioning, they are already propagated by the time applications run, making tokens unnecessary
+# - For immediate access needs, applications should create grants at runtime and use the returned tokens directly rather than relying on pre-provisioned grants
+output "grants" {
+  description = "A collection of grants for the key."
+  value       = local.grants
+}
+
 output "predefined_roles" {
   description = "The predefined roles that have access to the KMS key."
   value       = var.predefined_roles
@@ -88,6 +112,14 @@ output "aliases" {
 #       for k, v in aws_kms_key.this :
 #       k => v
 #       if !contains(["key_id", "arn", "description", "is_enabled", "deletion_window_in_days", "key_usage", "customer_master_key_spec", "enable_key_rotation", "rotation_period_in_days", "custom_key_store_id", "xks_key_id", "multi_region", "tags", "tags_all", "id", "timeouts", "policy", "bypass_policy_lockout_safety_check"], k)
+#     }
+#     grants = {
+#       for name, grant in aws_kms_grant.this :
+#       name => {
+#         for k, v in grant :
+#         k => v
+#         if !contains(["grant_id", "name", "id", "key_id", "grantee_principal", "operations", "retiring_principal", "retire_on_delete", "constraints", "grant_creation_tokens", "grant_token"], k)
+#       }
 #     }
 #   }
 # }

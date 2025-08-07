@@ -103,6 +103,90 @@ variable "key_rotation" {
   }
 }
 
+variable "grants" {
+  description = <<EOF
+  (Optional) A list of grants configuration for granting access to the KMS key. Each item of `grants` as defined below.
+    (Required) `name` - A friendly name for the grant.
+    (Required) `grantee_principal` - The principal that is given permission to perform the operations that the grant permits in ARN format.
+    (Required) `operations` - A set of operations that the grant permits. Valid values are `Encrypt`, `Decrypt`, `GenerateDataKey`, `GenerateDataKeyWithoutPlaintext`, `ReEncryptFrom`, `ReEncryptTo`, `CreateGrant`, `RetireGrant`, `DescribeKey`, `GenerateDataKeyPair`, `GenerateDataKeyPairWithoutPlaintext`, `GetPublicKey`, `Sign`, `Verify`, `GenerateMac`, `VerifyMac`, or `DeriveSharedSecret`.
+    (Optional) `retiring_principal` - The principal that is given permission to retire the grant by using RetireGrant operation in ARN format.
+    (Optional) `retire_on_delete` - Whether to retire the grant upon deletion. Defaults to `false`.
+      Retire: Grantee returns permissions voluntarily (normal termination)
+      Revoke: Admin forcefully cancels permissions (emergency termination)
+    (Optional) `grant_creation_tokens` - A list of grant tokens to be used when creating the grant. Use grant token for immediate access without waiting for grant propagation (up to 5 min). Required for time-sensitive operations.
+    (Optional) `constraints` - A configuration for grant constraints. `constraints` block as defined below.
+      (Optional) `type` - The type of constraints. Valid values are `ENCRYPTION_CONTEXT_EQUALS` or `ENCRYPTION_CONTEXT_SUBSET`. Defaults to `ENCRYPTION_CONTEXT_SUBSET`.
+      (Optional) `value` - A map of key-value pair to be validated against the encryption context during cryptographic operations.
+  EOF
+  type = list(object({
+    name              = string
+    grantee_principal = string
+    operations        = set(string)
+
+    retiring_principal    = optional(string)
+    retire_on_delete      = optional(bool, false)
+    grant_creation_tokens = optional(list(string))
+
+    constraints = optional(object({
+      type  = optional(string, "ENCRYPTION_CONTEXT_SUBSET")
+      value = map(string)
+    }))
+  }))
+  default  = []
+  nullable = false
+
+  validation {
+    condition = alltrue([
+      for grant in var.grants :
+      alltrue([
+        for op in grant.operations :
+        contains([
+          "Encrypt",
+          "Decrypt",
+          "GenerateDataKey",
+          "GenerateDataKeyWithoutPlaintext",
+          "ReEncryptFrom",
+          "ReEncryptTo",
+          "CreateGrant",
+          "RetireGrant",
+          "DescribeKey",
+          "GenerateDataKeyPair",
+          "GenerateDataKeyPairWithoutPlaintext",
+          "GetPublicKey",
+          "Sign",
+          "Verify",
+          "GenerateMac",
+          "VerifyMac",
+          "DeriveSharedSecret",
+        ], op)
+      ])
+    ])
+    error_message = "Valid values for grant operations are `Encrypt`, `Decrypt`, `GenerateDataKey`, `GenerateDataKeyWithoutPlaintext`, `ReEncryptFrom`, `ReEncryptTo`, `CreateGrant`, `RetireGrant`, `DescribeKey`, `GenerateDataKeyPair`, `GenerateDataKeyPairWithoutPlaintext`, `GetPublicKey`, `Sign`, `Verify`, `GenerateMac`, `VerifyMac`, or `DeriveSharedSecret`."
+  }
+
+  validation {
+    condition = alltrue([
+      for grant in var.grants :
+      contains([
+        "ENCRYPTION_CONTEXT_EQUALS",
+        "ENCRYPTION_CONTEXT_SUBSET"
+      ], grant.constraints.type)
+      if grant.constraints != null
+    ])
+    error_message = "Valid values for `constraints.type` are `ENCRYPTION_CONTEXT_EQUALS` or `ENCRYPTION_CONTEXT_SUBSET`."
+  }
+  validation {
+    condition = alltrue([
+      for grant in var.grants :
+      anytrue([
+        grant.constraints == null,
+        grant.constraints != null && length(keys(grant.constraints.value)) > 0,
+      ])
+    ])
+    error_message = "If `constraints` is defined, it must contain at least one key-value pair in `value`."
+  }
+}
+
 variable "predefined_roles" {
   description = <<EOF
   (Optional) A configuration for predefined roles of the KMS key. This configuration will be merged with given `policy` if it is defined. `predefined_roles` block as defined below.
