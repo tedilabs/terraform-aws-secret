@@ -1,4 +1,41 @@
 ###################################################
+# Grants for Customer Managed Key
+###################################################
+
+resource "aws_kms_grant" "this" {
+  for_each = {
+    for grant in var.grants :
+    grant.name => grant
+  }
+
+  key_id = aws_kms_key.this.key_id
+
+  name              = each.key
+  grantee_principal = each.value.grantee_principal
+  operations        = each.value.operations
+
+  retiring_principal    = each.value.retiring_principal
+  retire_on_delete      = each.value.retire_on_delete
+  grant_creation_tokens = each.value.grant_creation_tokens
+
+  dynamic "constraints" {
+    for_each = each.value.constraints != null ? [each.value.constraints] : []
+
+    content {
+      encryption_context_equals = (constraints.value.type == "ENCRYPTION_CONTEXT_EQUALS"
+        ? constraints.value.value
+        : null
+      )
+      encryption_context_subset = (constraints.value.type == "ENCRYPTION_CONTEXT_SUBSET"
+        ? constraints.value.value
+        : null
+      )
+    }
+  }
+}
+
+
+###################################################
 # Key Policy for Customer Managed Key
 ###################################################
 
