@@ -14,7 +14,7 @@ Terraform Modules from [this package](https://github.com/tedilabs/terraform-aws-
 - **KMS (Key Management Service)**
   - CMK (Customer Master Key)
   - Key Alias
-  - Grant (Comming soon!)
+  - Grant
 - **Secrets Manager**
   - Secret
   - Secret Versions
@@ -34,4 +34,4 @@ Like this project? Follow the repository on [GitHub](https://github.com/tedilabs
 
 Provided under the terms of the [Apache License](LICENSE).
 
-Copyright © 2022-2023, [Byungjin Park](https://www.posquit0.com).
+Copyright © 2022-2025, [Byungjin Park](https://www.posquit0.com).
