@@ -41,8 +41,10 @@ module "this" {
   ignore_value_changes = var.ignore_value_changes
   value                = each.value.value
 
-  resource_group_enabled = false
-  module_tags_enabled    = false
+  resource_group = {
+    enabled = false
+  }
+  module_tags_enabled = false
 
   tags = merge(
     {

@@ -97,3 +97,19 @@ output "overwrite_in_replicas" {
 #     if !contains(["tags", "tags_all", "policy", "id", "arn", "name", "description", "kms_key_id", "recovery_window_in_days", "force_overwrite_replica_secret", "name_prefix", "replica"], k)
 #   }
 # }
+
+output "resource_group" {
+  description = "The resource group created to manage resources in this module."
+  value = merge(
+    {
+      enabled = var.resource_group.enabled && var.module_tags_enabled
+    },
+    (var.resource_group.enabled && var.module_tags_enabled
+      ? {
+        arn  = module.resource_group[0].arn
+        name = module.resource_group[0].name
+      }
+      : {}
+    )
+  )
+}
