@@ -58,26 +58,46 @@ data "aws_iam_policy_document" "this" {
 data "aws_iam_policy_document" "predefined" {
   # Key owner - all key operations
   dynamic "statement" {
-    for_each = length(var.predefined_roles.owners) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "OWNER"
+    ]
+    iterator = policy
 
     content {
-      sid       = "KeyOwner"
+      sid       = "KeyOwner${policy.key}"
       actions   = ["kms:*"]
       resources = ["*"]
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.owners
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   # INFO: https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-administrators
   dynamic "statement" {
-    for_each = length(var.predefined_roles.administrators) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "ADMINISTRATOR"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyAdministration"
+      sid = "KeyAdministration${policy.key}"
       actions = [
         "kms:Create*",
         "kms:Describe*",
@@ -101,17 +121,32 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.administrators
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   # INFO: https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users
   dynamic "statement" {
-    for_each = length(var.predefined_roles.users) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "USER"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyUsage"
+      sid = "KeyUsage${policy.key}"
       actions = [
         "kms:Encrypt",
         "kms:Decrypt",
@@ -123,17 +158,32 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.users
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   # INFO: https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-service-integration
   dynamic "statement" {
-    for_each = length(var.predefined_roles.service_users) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "SERVICE_USER"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyServiceUsage"
+      sid = "KeyServiceUsage${policy.key}"
       actions = [
         "kms:CreateGrant",
         "kms:ListGrants",
@@ -143,7 +193,7 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.service_users
+        identifiers = policy.value.iam_entities
       }
 
       condition {
@@ -151,16 +201,31 @@ data "aws_iam_policy_document" "predefined" {
         variable = "kms:GrantIsForAWSResource"
         values   = [true]
       }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
+      }
     }
   }
 
   ## Key cryptographic operations
   # INFO: https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-users-crypto
   dynamic "statement" {
-    for_each = length(var.predefined_roles.symmetric_encryption) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "SYMMETRIC_ENCRYPTION"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeySymmetricEncryption"
+      sid = "KeySymmetricEncryption${policy.key}"
       actions = [
         "kms:Decrypt",
         "kms:DescribeKey",
@@ -172,16 +237,31 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.symmetric_encryption
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   dynamic "statement" {
-    for_each = length(var.predefined_roles.asymmetric_encryption) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "ASYMMETRIC_ENCRYPTION"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyAsymmetricPublicEncryption"
+      sid = "KeyAsymmetricPublicEncryption${policy.key}"
       actions = [
         "kms:Encrypt",
         "kms:Decrypt",
@@ -193,16 +273,31 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.asymmetric_encryption
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   dynamic "statement" {
-    for_each = length(var.predefined_roles.asymmetric_signing) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "ASYMMETRIC_SIGNING"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyAsymmetricSignVerify"
+      sid = "KeyAsymmetricSignVerify${policy.key}"
       actions = [
         "kms:DescribeKey",
         "kms:GetPublicKey",
@@ -213,16 +308,31 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.asymmetric_signing
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }
 
   dynamic "statement" {
-    for_each = length(var.predefined_roles.hmac) > 0 ? ["go"] : []
+    for_each = [
+      for policy in var.predefined_policies :
+      policy
+      if policy.role == "HMAC"
+    ]
+    iterator = policy
 
     content {
-      sid = "KeyHMAC"
+      sid = "KeyHMAC${policy.key}"
       actions = [
         "kms:DescribeKey",
         "kms:GenerateMac",
@@ -232,7 +342,17 @@ data "aws_iam_policy_document" "predefined" {
 
       principals {
         type        = "AWS"
-        identifiers = var.predefined_roles.hmac
+        identifiers = policy.value.iam_entities
+      }
+
+      dynamic "condition" {
+        for_each = policy.value.conditions
+
+        content {
+          variable = condition.value.key
+          test     = condition.value.condition
+          values   = condition.value.values
+        }
       }
     }
   }

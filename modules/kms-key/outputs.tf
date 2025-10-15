@@ -70,9 +70,9 @@ output "grants" {
   value       = local.grants
 }
 
-output "predefined_roles" {
-  description = "The predefined roles that have access to the KMS key."
-  value       = var.predefined_roles
+output "predefined_policies" {
+  description = "The predefined policies that have access to the KMS key."
+  value       = var.predefined_policies
 }
 
 output "policy" {

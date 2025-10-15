@@ -187,31 +187,52 @@ variable "grants" {
   }
 }
 
-variable "predefined_roles" {
+variable "predefined_policies" {
   description = <<EOF
-  (Optional) A configuration for predefined roles of the KMS key. This configuration will be merged with given `policy` if it is defined. `predefined_roles` block as defined below.
-    (Optional) `owners` - A set of AWS principals that are allowed to perform all key operations.
-    (Optional) `administrators` - A set of AWS principals that are allowed to perform all key administrative operations.
-    (Optional) `users` - A set of AWS principals that are allowed to use the key for encryption and decryption operations.
-    (Optional) `service_users` - A set of AWS principals that are allowed to use the key for service integration operations.
-    (Optional) `symmetric_encryption` - A set of AWS principals that are allowed to use the key for symmetric encryption operations.
-    (Optional) `asymmetric_encryption` - A set of AWS principals that are allowed to use the key for asymmetric encryption operations.
-    (Optional) `asymmetric_signing` - A set of AWS principals that are allowed to use the key for asymmetric signing operations.
-    (Optional) `hmac` - A set of AWS principals that are allowed to use the key for HMAC operations.
+  (Optional) A configuration for predefined policies of the KMS key. This configuration will be merged with given `policy` if it is defined. Each item of `predefined_policies` block as defined below.
+    (Required) `role` - The predefined role to be applied to the KMS key. Valid values are `OWNER`, `ADMINISTRATOR`, `USER`, `SERVICE_USER`, `SYMMETRIC_ENCRYPTION`, `ASYMMETRIC_ENCRYPTION`, `ASYMMETRIC_SIGNING`, or `HMAC`.
+      `OWNER` - Full access to the KMS key, including permission to modify the key policy and delete the key.
+      `ADMINISTRATOR` - Administrative access to the KMS key, including permission to modify the key policy, but not permission to delete the key.
+      `USER` - Access to use the KMS key for cryptographic operations, but not administrative permissions.
+      `SERVICE_USER` - Access for AWS services to use the KMS key for cryptographic operations on your behalf.
+      `SYMMETRIC_ENCRYPTION` - Access to use the KMS key for symmetric encryption and decryption operations.
+      `ASYMMETRIC_ENCRYPTION` - Access to use the KMS key for asymmetric encryption and decryption operations.
+      `ASYMMETRIC_SIGNING` - Access to use the KMS key for asymmetric signing and verification operations.
+      `HMAC` - Access to use the KMS key for HMAC generation and verification operations.
+    (Required) `iam_entities` - A set of ARNs of AWS IAM entities who can be permitted to access the KMS key for the predefined role.
+    (Optional) `conditions` - A list of required conditions to be met to allow the predefined role access to the KMS key. Each item of `conditions` block as defined below.
+      (Required) `key` - The key to match a condition for when a policy is in effect.
+      (Required) `condition` - The condition operator to match the condition keys and values in the policy against keys and values in the request context. Examples: `StringEquals`, `StringLike`.
+      (Required) `values` - A list of allowed values of the key to match a condition with condition operator.
   EOF
-  type = object({
-    owners         = optional(set(string), [])
-    administrators = optional(set(string), [])
-    users          = optional(set(string), [])
-    service_users  = optional(set(string), [])
-
-    symmetric_encryption  = optional(set(string), [])
-    asymmetric_encryption = optional(set(string), [])
-    asymmetric_signing    = optional(set(string), [])
-    hmac                  = optional(set(string), [])
-  })
-  default  = {}
+  type = list(object({
+    role         = string
+    iam_entities = set(string)
+    conditions = optional(list(object({
+      key       = string
+      condition = string
+      values    = list(string)
+    })), [])
+  }))
+  default  = []
   nullable = false
+
+  validation {
+    condition = alltrue([
+      for policy in var.predefined_policies :
+      contains([
+        "OWNER",
+        "ADMINISTRATOR",
+        "USER",
+        "SERVICE_USER",
+        "SYMMETRIC_ENCRYPTION",
+        "ASYMMETRIC_ENCRYPTION",
+        "ASYMMETRIC_SIGNING",
+        "HMAC",
+      ], policy.role)
+    ])
+    error_message = "Valid values for `role` are `OWNER`, `ADMINISTRATOR`, `USER`, `SERVICE_USER`, `SYMMETRIC_ENCRYPTION`, `ASYMMETRIC_ENCRYPTION`, `ASYMMETRIC_SIGNING`, or `HMAC`."
+  }
 }
 
 variable "policy" {
