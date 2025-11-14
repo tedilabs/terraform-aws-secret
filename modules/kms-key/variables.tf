@@ -1,3 +1,10 @@
+variable "region" {
+  description = "(Optional) The region in which to create the module resources. If not provided, the module resources will be created in the provider's configured region."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
 variable "name" {
   description = "(Required) Name of the KMS key."
   type        = string
@@ -68,6 +75,7 @@ variable "spec" {
       "HMAC_256",
       "HMAC_384",
       "HMAC_512",
+      "ECC_NIST_EDWARDS25519",
       "ECC_NIST_P256",
       "ECC_NIST_P384",
       "ECC_NIST_P521",
@@ -288,9 +296,6 @@ variable "module_tags_enabled" {
 ###################################################
 # Resource Group
 ###################################################
-
-
-
 
 variable "resource_group" {
   description = <<EOF

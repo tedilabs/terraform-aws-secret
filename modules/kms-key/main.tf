@@ -23,6 +23,8 @@ locals {
 # - 'policy'
 # - 'bypass_policy_lockout_safety_check'
 resource "aws_kms_key" "this" {
+  region = var.region
+
   description             = var.description
   is_enabled              = var.enabled
   deletion_window_in_days = var.deletion_window_in_days
@@ -61,6 +63,8 @@ resource "aws_kms_key" "this" {
 # - `name_prefix`
 resource "aws_kms_alias" "this" {
   for_each = var.aliases
+
+  region = var.region
 
   target_key_id = aws_kms_key.this.key_id
   name          = each.key
