@@ -4,6 +4,11 @@
   - any-glob-to-any-file:
     - modules/kms-key/**/*
 
+":floppy_disk: kms-replica-key":
+- changed-files:
+  - any-glob-to-any-file:
+    - modules/kms-replica-key/**/*
+
 ":floppy_disk: secrets-manager-secret":
 - changed-files:
   - any-glob-to-any-file:

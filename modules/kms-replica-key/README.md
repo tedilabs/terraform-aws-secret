@@ -1,0 +1,79 @@
+# kms-replica-key
+
+This module creates following resources.
+
+- `aws_kms_replica_key`
+- `aws_kms_key_policy` (optional)
+- `aws_kms_alias` (optional)
+- `aws_kms_grant` (optional)
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.12 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.12 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.16.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | tedilabs/misc/aws//modules/resource-group | ~> 0.12.0 |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_kms_alias.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
+| [aws_kms_grant.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_grant) | resource |
+| [aws_kms_key_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key_policy) | resource |
+| [aws_kms_replica_key.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_replica_key) | resource |
+| [aws_iam_policy_document.predefined](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_name"></a> [name](#input\_name) | (Required) Name of the replica key. | `string` | n/a | yes |
+| <a name="input_primary_key"></a> [primary\_key](#input\_primary\_key) | (Required) The ARN of the multi-Region primary key to replicate. The primary key must be in a different AWS Region of the same AWS Partition. You can create only one replica of a given primary key in each AWS Region. | `string` | n/a | yes |
+| <a name="input_aliases"></a> [aliases](#input\_aliases) | (Optional) A set of display name of the alias. The name must start with the word `alias/`. | `set(string)` | `[]` | no |
+| <a name="input_bypass_policy_lockout_safety_check"></a> [bypass\_policy\_lockout\_safety\_check](#input\_bypass\_policy\_lockout\_safety\_check) | (Optional) Whether to bypass the key policy lockout safety check performed when creating or updating the key's policy. Setting this value to true increases the risk that the CMK becomes unmanageable. Defaults to `false`. | `bool` | `false` | no |
+| <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | (Optional) Duration in days after which the key is deleted after destruction of the resource. Valid value is between `7` and `30` days. Defaults to `30`. | `number` | `30` | no |
+| <a name="input_description"></a> [description](#input\_description) | (Optional) The description of the replica key. | `string` | `"Managed by Terraform."` | no |
+| <a name="input_enabled"></a> [enabled](#input\_enabled) | (Optional) Whether the replica key is enabled. Disabled replica keys cannot be used in cryptographic operations. Defaults to `true`. | `bool` | `true` | no |
+| <a name="input_grants"></a> [grants](#input\_grants) | (Optional) A list of grants configuration for granting access to the replica key. Each item of `grants` as defined below.<br/>    (Required) `name` - A friendly name for the grant.<br/>    (Required) `grantee_principal` - The principal that is given permission to perform the operations that the grant permits in ARN format.<br/>    (Required) `operations` - A set of operations that the grant permits. Valid values are `Encrypt`, `Decrypt`, `GenerateDataKey`, `GenerateDataKeyWithoutPlaintext`, `ReEncryptFrom`, `ReEncryptTo`, `CreateGrant`, `RetireGrant`, `DescribeKey`, `GenerateDataKeyPair`, `GenerateDataKeyPairWithoutPlaintext`, `GetPublicKey`, `Sign`, `Verify`, `GenerateMac`, `VerifyMac`, or `DeriveSharedSecret`.<br/>    (Optional) `retiring_principal` - The principal that is given permission to retire the grant by using RetireGrant operation in ARN format.<br/>    (Optional) `retire_on_delete` - Whether to retire the grant upon deletion. Defaults to `false`.<br/>      Retire: Grantee returns permissions voluntarily (normal termination)<br/>      Revoke: Admin forcefully cancels permissions (emergency termination)<br/>    (Optional) `grant_creation_tokens` - A list of grant tokens to be used when creating the grant. Use grant token for immediate access without waiting for grant propagation (up to 5 min). Required for time-sensitive operations.<br/>    (Optional) `constraints` - A configuration for grant constraints. `constraints` block as defined below.<br/>      (Optional) `type` - The type of constraints. Valid values are `ENCRYPTION_CONTEXT_EQUALS` or `ENCRYPTION_CONTEXT_SUBSET`. Defaults to `ENCRYPTION_CONTEXT_SUBSET`.<br/>      (Optional) `value` - A map of key-value pair to be validated against the encryption context during cryptographic operations. | <pre>list(object({<br/>    name              = string<br/>    grantee_principal = string<br/>    operations        = set(string)<br/><br/>    retiring_principal    = optional(string)<br/>    retire_on_delete      = optional(bool, false)<br/>    grant_creation_tokens = optional(list(string))<br/><br/>    constraints = optional(object({<br/>      type  = optional(string, "ENCRYPTION_CONTEXT_SUBSET")<br/>      value = map(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_module_tags_enabled"></a> [module\_tags\_enabled](#input\_module\_tags\_enabled) | (Optional) Whether to create AWS Resource Tags for the module informations. | `bool` | `true` | no |
+| <a name="input_policy"></a> [policy](#input\_policy) | (Optional) A valid policy JSON document. Although this is a key policy, not an IAM policy, an `aws_iam_policy_document`, in the form that designates a principal, can be used. | `string` | `null` | no |
+| <a name="input_predefined_policies"></a> [predefined\_policies](#input\_predefined\_policies) | (Optional) A configuration for predefined policies of the replica key. This configuration will be merged with given `policy` if it is defined. Each item of `predefined_policies` block as defined below.<br/>    (Required) `role` - The predefined role to be applied to the replica key. Valid values are `OWNER`, `ADMINISTRATOR`, `USER`, `SERVICE_USER`, `SYMMETRIC_ENCRYPTION`, `ASYMMETRIC_ENCRYPTION`, `ASYMMETRIC_SIGNING`, or `HMAC`.<br/>      `OWNER` - Full access to the replica key, including permission to modify the key policy and delete the key.<br/>      `ADMINISTRATOR` - Administrative access to the replica key, including permission to modify the key policy, but not permission to delete the key.<br/>      `USER` - Access to use the replica key for cryptographic operations, but not administrative permissions.<br/>      `SERVICE_USER` - Access for AWS services to use the replica key for cryptographic operations on your behalf.<br/>      `SYMMETRIC_ENCRYPTION` - Access to use the replica key for symmetric encryption and decryption operations.<br/>      `ASYMMETRIC_ENCRYPTION` - Access to use the replica key for asymmetric encryption and decryption operations.<br/>      `ASYMMETRIC_SIGNING` - Access to use the replica key for asymmetric signing and verification operations.<br/>      `HMAC` - Access to use the replica key for HMAC generation and verification operations.<br/>    (Required) `iam_entities` - A set of ARNs of AWS IAM entities who can be permitted to access the replica key for the predefined role.<br/>    (Optional) `conditions` - A list of required conditions to be met to allow the predefined role access to the replica key. Each item of `conditions` block as defined below.<br/>      (Required) `key` - The key to match a condition for when a policy is in effect.<br/>      (Required) `condition` - The condition operator to match the condition keys and values in the policy against keys and values in the request context. Examples: `StringEquals`, `StringLike`.<br/>      (Required) `values` - A list of allowed values of the key to match a condition with condition operator. | <pre>list(object({<br/>    role         = string<br/>    iam_entities = set(string)<br/>    conditions = optional(list(object({<br/>      key       = string<br/>      condition = string<br/>      values    = list(string)<br/>    })), [])<br/>  }))</pre> | `[]` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) The region in which to create the module resources. If not provided, the module resources will be created in the provider's configured region. | `string` | `null` | no |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | (Optional) A configurations of Resource Group for this module. `resource_group` as defined below.<br/>    (Optional) `enabled` - Whether to create Resource Group to find and group AWS resources which are created by this module. Defaults to `true`.<br/>    (Optional) `name` - The name of Resource Group. A Resource Group name can have a maximum of 127 characters, including letters, numbers, hyphens, dots, and underscores. The name cannot start with `AWS` or `aws`. If not provided, a name will be generated using the module name and instance name.<br/>    (Optional) `description` - The description of Resource Group. Defaults to `Managed by Terraform.`. | <pre>object({<br/>    enabled     = optional(bool, true)<br/>    name        = optional(string, "")<br/>    description = optional(string, "Managed by Terraform.")<br/>  })</pre> | `{}` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A map of tags to add to all resources. | `map(string)` | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_aliases"></a> [aliases](#output\_aliases) | A collection of aliases of the key. |
+| <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the replica key. |
+| <a name="output_deletion_window_in_days"></a> [deletion\_window\_in\_days](#output\_deletion\_window\_in\_days) | Duration in days after which the key is deleted after destruction of the resource. |
+| <a name="output_description"></a> [description](#output\_description) | The description of the replica key. |
+| <a name="output_enabled"></a> [enabled](#output\_enabled) | Whether the replica key is enabled. |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the replica key. |
+| <a name="output_key_rotation"></a> [key\_rotation](#output\_key\_rotation) | The key rotation configuration of the replica key. |
+| <a name="output_name"></a> [name](#output\_name) | The KMS Key name. |
+| <a name="output_policy"></a> [policy](#output\_policy) | The Resource Policy for KMS Key. |
+| <a name="output_predefined_policies"></a> [predefined\_policies](#output\_predefined\_policies) | The predefined policies that have access to the replica key. |
+| <a name="output_primary_key"></a> [primary\_key](#output\_primary\_key) | The ARN of the primary key for which this key is a replica. |
+| <a name="output_region"></a> [region](#output\_region) | The AWS region this module resources resides in. |
+| <a name="output_resource_group"></a> [resource\_group](#output\_resource\_group) | The resource group created to manage resources in this module. |
+| <a name="output_spec"></a> [spec](#output\_spec) | The specification of replica key which is the encryption algorithm or signing algorithm. |
+| <a name="output_usage"></a> [usage](#output\_usage) | The usage of the replica key. |
+<!-- END_TF_DOCS -->

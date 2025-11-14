@@ -6,6 +6,13 @@
 
 Terraform module which creates secret related resources on AWS.
 
+- [kms-key](./modules/kms-key)
+- [kms-replica-key](./modules/kms-replica-key)
+- [secrets-manager-secret](./modules/secrets-manager-secret)
+- [ssm-parameter-store-parameter](./modules/ssm-parameter-store-parameter)
+- [ssm-parameter-store-parameter-set](./modules/ssm-parameter-store-parameter-set)
+- [ssm-parameter-store-settings](./modules/ssm-parameter-store-settings)
+
 
 ## Target AWS Services
 
@@ -15,6 +22,7 @@ Terraform Modules from [this package](https://github.com/tedilabs/terraform-aws-
   - CMK (Customer Master Key)
   - Key Alias
   - Grant
+  - Multi-region Replica Key
 - **Secrets Manager**
   - Secret
   - Secret Versions
