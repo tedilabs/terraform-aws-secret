@@ -1,3 +1,8 @@
+output "region" {
+  description = "The AWS region this module resources resides in."
+  value       = aws_secretsmanager_secret.this.region
+}
+
 output "arn" {
   description = "The ARN of the Secrets Manager secret."
   value       = aws_secretsmanager_secret.this.arn
@@ -25,10 +30,16 @@ output "type" {
 
 output "value" {
   description = "The secret value in the current version of the secret with `AWSCURRENT` staging label."
-  value = try(coalesce(
-    one(aws_secretsmanager_secret_version.latest[*].secret_string),
-    one(aws_secretsmanager_secret_version.latest[*].secret_binary),
-  ), null)
+  value = (length(aws_secretsmanager_secret_version.latest) > 0
+    ? try(
+      jsondecode(aws_secretsmanager_secret_version.latest[0].secret_string),
+      coalesce(
+        aws_secretsmanager_secret_version.latest[0].secret_string,
+        aws_secretsmanager_secret_version.latest[0].secret_binary,
+      )
+    )
+    : null
+  )
 }
 
 output "versions" {
@@ -36,9 +47,12 @@ output "versions" {
   value = [
     for id, version in aws_secretsmanager_secret_version.versions : {
       id = id
-      value = coalesce(
-        version.secret_string,
-        version.secret_binary,
+      value = try(
+        jsondecode(version.secret_string),
+        coalesce(
+          version.secret_string,
+          version.secret_binary,
+        ),
       )
       labels = version.version_stages
     }
@@ -90,14 +104,6 @@ output "overwrite_in_replicas" {
   value       = aws_secretsmanager_secret.this.force_overwrite_replica_secret
 }
 
-# output "debug" {
-#   value = {
-#     for k, v in aws_secretsmanager_secret.this :
-#     k => v
-#     if !contains(["tags", "tags_all", "policy", "id", "arn", "name", "description", "kms_key_id", "recovery_window_in_days", "force_overwrite_replica_secret", "name_prefix", "replica"], k)
-#   }
-# }
-
 output "resource_group" {
   description = "The resource group created to manage resources in this module."
   value = merge(
@@ -113,3 +119,11 @@ output "resource_group" {
     )
   )
 }
+
+# output "debug" {
+#   value = {
+#     for k, v in aws_secretsmanager_secret.this :
+#     k => v
+#     if !contains(["tags", "tags_all", "policy", "id", "arn", "name", "description", "kms_key_id", "recovery_window_in_days", "force_overwrite_replica_secret", "name_prefix", "replica"], k)
+#   }
+# }

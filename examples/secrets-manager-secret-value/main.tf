@@ -15,8 +15,8 @@ module "secret__text" {
   name        = "app/secrets-manager-secret/value/text"
   description = "Managed by Terraform."
 
-  type  = "TEXT"
-  value = "this_is_the_secret"
+  type       = "TEXT"
+  text_value = "this_is_the_secret"
 
   deletion_window_in_days = 7
 
@@ -34,7 +34,7 @@ module "secret__kv" {
   description = "Managed by Terraform."
 
   type = "KEY_VALUE"
-  value = {
+  kv_value = {
     a = "foo"
     b = "bar"
     c = "foobar"
@@ -55,8 +55,8 @@ module "secret__binary" {
   name        = "app/secrets-manager-secret/value/binary"
   description = "Managed by Terraform."
 
-  type  = "BINARY"
-  value = filebase64("${path.module}/files/binary")
+  type         = "BINARY"
+  binary_value = filebase64("${path.module}/files/binary")
 
   deletion_window_in_days = 7
 

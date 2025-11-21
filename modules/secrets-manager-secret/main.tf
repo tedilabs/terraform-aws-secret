@@ -24,6 +24,8 @@ locals {
 # INFO: Not supported attributes
 # - `name_prefix`
 resource "aws_secretsmanager_secret" "this" {
+  region = var.region
+
   name        = var.name
   description = var.description
 
@@ -39,7 +41,7 @@ resource "aws_secretsmanager_secret" "this" {
 
     content {
       region     = replica.key
-      kms_key_id = try(replica.kms_key, null)
+      kms_key_id = replica.kms_key
     }
   }
 
@@ -60,32 +62,38 @@ resource "aws_secretsmanager_secret" "this" {
 locals {
   latest = {
     value = (var.type == "KEY_VALUE"
-      ? jsonencode(var.value)
-      : (var.type == "TEXT" ? tostring(var.value) : null)
+      ? jsonencode(var.kv_value)
+      : (var.type == "TEXT" ? var.text_value : null)
     )
-    binary = var.type == "BINARY" ? var.value : null
+    binary = var.type == "BINARY" ? var.binary_value : null
   }
   versions = [
     for version in var.versions :
     merge(version, {
-      id = var.type == "KEY_VALUE" ? md5(jsonencode(version.value)) : md5(version.value)
+      id = var.type == "KEY_VALUE" ? md5(jsonencode(version.kv_value)) : md5(version.text_value != null ? version.text_value : "")
 
       value = (var.type == "KEY_VALUE"
-        ? jsonencode(version.value)
-        : (var.type == "TEXT" ? tostring(version.value) : null)
+        ? jsonencode(version.kv_value)
+        : (var.type == "TEXT" ? version.text_value : null)
       )
-      binary = var.type == "BINARY" ? version.value : null
+      binary = var.type == "BINARY" ? version.binary_value : null
     })
   ]
 }
 
 resource "aws_secretsmanager_secret_version" "latest" {
-  count = var.value != null ? 1 : 0
+  count = anytrue([
+    var.binary_value != null,
+    var.text_value != null,
+    length(var.kv_value) > 0,
+  ]) ? 1 : 0
+
+  region = var.region
 
   secret_id = aws_secretsmanager_secret.this.arn
 
   secret_string = local.latest.value
-  secret_binary = try(tostring(local.latest.binary), null)
+  secret_binary = local.latest.binary
 
   lifecycle {
     create_before_destroy = true
@@ -98,10 +106,12 @@ resource "aws_secretsmanager_secret_version" "versions" {
     version.id => version
   }
 
+  region = var.region
+
   secret_id = aws_secretsmanager_secret.this.arn
 
   secret_string  = each.value.value
-  secret_binary  = try(tostring(each.value.binary), null)
+  secret_binary  = each.value.binary
   version_stages = each.value.labels
 
   lifecycle {
@@ -117,6 +127,8 @@ resource "aws_secretsmanager_secret_version" "versions" {
 resource "aws_secretsmanager_secret_policy" "this" {
   count = var.policy != null ? 1 : 0
 
+  region = var.region
+
   secret_arn = aws_secretsmanager_secret.this.arn
   policy     = var.policy
 
@@ -130,6 +142,8 @@ resource "aws_secretsmanager_secret_policy" "this" {
 
 resource "aws_secretsmanager_secret_rotation" "this" {
   count = var.rotation.enabled ? 1 : 0
+
+  region = var.region
 
   secret_id = aws_secretsmanager_secret.this.id
 

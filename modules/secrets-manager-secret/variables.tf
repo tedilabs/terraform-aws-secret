@@ -1,3 +1,10 @@
+variable "region" {
+  description = "(Optional) The region in which to create the module resources. If not provided, the module resources will be created in the provider's configured region."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
 variable "name" {
   description = "(Required) Friendly name of the new secret. The secret name can consist of uppercase letters, lowercase letters, digits, and any of the following characters: `/_+=.@-`."
   type        = string
@@ -23,9 +30,23 @@ variable "type" {
   }
 }
 
-variable "value" {
-  description = "(Optional) The secret value that you want to encrypt and store in the current version of the secret. Specify plaintext data with `string` type if `type` is `TEXT`. Specify key-value data with `map` type if `type` is `KEY_VALUE`. Specify binary data with `string` type if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
-  type        = any
+variable "binary_value" {
+  description = "(Optional) The secret value in base64-encoded binary that you want to encrypt and store in the current version of the secret. Only used if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "kv_value" {
+  description = "(Optional) The secret value in key/value that you want to encrypt and store in the current version of the secret. Only used if `type` is `KEY_VALUE`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  type        = map(string)
+  default     = {}
+  nullable    = false
+}
+
+variable "text_value" {
+  description = "(Optional) The secret value in text that you want to encrypt and store in the current version of the secret. Only used if `type` is `TEXT`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  type        = string
   default     = null
   nullable    = true
 }
@@ -33,32 +54,47 @@ variable "value" {
 variable "versions" {
   description = <<EOF
   (Optional) A list of versions other than `AWSCURRENT` version of the Secrets Manager secret. Each value of `versions` block as defined below.
-    (Required) `value` - The secret value that you want to encrypyt and store in this version of the secret. Specify plaintext data with `string` type if `type` is `TEXT`. Specify key-value data with `map` type if `type` is `KEY_VALUE`. Specify binary data with `string` type if `type` is `BINARY`.
-    (Required) `labels` - A list of staging labels that are attached to this version of the secret. A staging label must be unique to a single version of the secret. If you specify a staging label that's already associated with a different version of the same secret then that staging label is automatically removed from the other version and attached to this version.
+    (Optioinal) `text_value` - The secret value in text that you want to encrypt and store in this version of the secret. Only used if `type` is `TEXT`.
+    (Optional) `kv_value` - The secret value in key/value that you want to encrypt and store in this version of the secret. Only used if `type` is `KEY_VALUE`.
+    (Optional) `binary_value` - The secret value in base64-encoded binary that you want to encrypt and store in this version of the secret. Only used if `type` is `BINARY`.
+    (Required) `labels` - A set of staging labels that are attached to this version of the secret. A staging label must be unique to a single version of the secret. If you specify a staging label that's already associated with a different version of the same secret then that staging label is automatically removed from the other version and attached to this version.
   EOF
-  type        = any
-  default     = []
-  nullable    = false
+  type = list(object({
+    binary_value = optional(string)
+    kv_value     = optional(map(string), {})
+    text_value   = optional(string)
+    labels       = set(string)
+  }))
+  default  = []
+  nullable = false
 
   validation {
     condition = alltrue([
-      alltrue([
-        for version in var.versions :
-        version.value != null
-      ]),
-      alltrue([
-        for version in var.versions :
-        length(version.labels) > 0
-      ]),
-      alltrue([
-        for version in var.versions :
-        alltrue([
-          for label in version.labels :
-          !contains(["AWSCURRENT", "AWSPENDING", "AWSPREVIOUS"], label)
-        ])
+      for version in var.versions :
+      anytrue([
+        var.type == "TEXT" && version.text_value != null,
+        var.type == "KEY_VALUE" && length(version.kv_value) > 0,
+        var.type == "BINARY" && version.binary_value != null,
       ])
     ])
-    error_message = "Not valid parameters for `versions`."
+    error_message = "Each version must have a value corresponding to the specified `type`."
+  }
+  validation {
+    condition = alltrue([
+      for version in var.versions :
+      length(version.labels) > 0
+    ])
+    error_message = "Each version must have at least one label."
+  }
+  validation {
+    condition = alltrue([
+      for version in var.versions :
+      alltrue([
+        for label in version.labels :
+        !contains(["AWSCURRENT", "AWSPENDING", "AWSPREVIOUS"], label)
+      ])
+    ])
+    error_message = "Staging labels `AWSCURRENT`, `AWSPENDING`, and `AWSPREVIOUS` cannot be set manually in `versions`."
   }
 }
 
@@ -167,9 +203,6 @@ variable "module_tags_enabled" {
 ###################################################
 # Resource Group
 ###################################################
-
-
-
 
 variable "resource_group" {
   description = <<EOF

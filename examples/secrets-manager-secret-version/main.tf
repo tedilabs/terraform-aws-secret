@@ -15,16 +15,16 @@ module "secret__text" {
   name        = "app/secrets-manager-secret/version/text"
   description = "Managed by Terraform."
 
-  type  = "TEXT"
-  value = "this_is_the_secret"
+  type       = "TEXT"
+  text_value = "this_is_the_secret"
   versions = [
     {
-      value  = "this_is_staging_secret"
-      labels = ["staging"]
+      text_value = "this_is_staging_secret"
+      labels     = ["staging"]
     },
     {
-      value  = "this_is_dev_secret"
-      labels = ["dev"]
+      text_value = "this_is_dev_secret"
+      labels     = ["dev"]
     }
   ]
 
@@ -44,20 +44,20 @@ module "secret__kv" {
   description = "Managed by Terraform."
 
   type = "KEY_VALUE"
-  value = {
+  kv_value = {
     env    = "prod"
     secret = "foo"
   }
   versions = [
     {
-      value = {
+      kv_value = {
         env    = "staging"
         secret = "bar"
       }
       labels = ["staging"]
     },
     {
-      value = {
+      kv_value = {
         env    = "dev"
         secret = "foobar"
       }
@@ -80,12 +80,12 @@ module "secret__binary" {
   name        = "app/secrets-manager-secret/version/binary"
   description = "Managed by Terraform."
 
-  type  = "BINARY"
-  value = filebase64("${path.module}/files/binary")
+  type         = "BINARY"
+  binary_value = filebase64("${path.module}/files/binary")
   versions = [
     {
-      value  = filebase64("${path.module}/files/binary2")
-      labels = ["staging"]
+      binary_value = filebase64("${path.module}/files/binary2")
+      labels       = ["staging"]
     },
   ]
 
