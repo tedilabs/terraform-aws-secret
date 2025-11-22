@@ -2,21 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_ami" "ubuntu_bionic" {
-  most_recent = true
-  owners      = ["099720109477"]
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 data "aws_ami" "ubuntu_focal" {
   most_recent = true
   owners      = ["099720109477"]
@@ -59,10 +44,6 @@ module "ami" {
 
   path = "/ami/ubuntu"
   parameters = [
-    {
-      name  = "/18.04"
-      value = data.aws_ami.ubuntu_bionic.image_id
-    },
     {
       name  = "/20.04"
       value = data.aws_ami.ubuntu_focal.image_id
