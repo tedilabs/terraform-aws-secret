@@ -36,27 +36,32 @@ output "value" {
       coalesce(
         aws_secretsmanager_secret_version.latest[0].secret_string,
         aws_secretsmanager_secret_version.latest[0].secret_binary,
-      )
+      ),
+      null,
     )
     : null
   )
+  sensitive = true
 }
 
 output "versions" {
   description = "A list of versions other than the current version of the secret."
   value = [
     for id, version in aws_secretsmanager_secret_version.versions : {
-      id = id
+      id  = id
+      arn = version.arn
       value = try(
         jsondecode(version.secret_string),
         coalesce(
           version.secret_string,
           version.secret_binary,
         ),
+        null,
       )
       labels = version.version_stages
     }
   ]
+  sensitive = true
 }
 
 output "kms_key" {
