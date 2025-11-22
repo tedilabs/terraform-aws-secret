@@ -27,6 +27,8 @@ module "this" {
 
   source = "../ssm-parameter-store-parameter"
 
+  region = var.region
+
   name        = join("", [var.path, each.key])
   description = coalesce(each.value.description, var.description)
   tier        = coalesce(each.value.tier, var.tier)

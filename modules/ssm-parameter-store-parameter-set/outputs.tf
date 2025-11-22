@@ -1,3 +1,8 @@
+output "region" {
+  description = "The AWS region this module resources resides in."
+  value       = var.region
+}
+
 output "path" {
   description = "The path used for the prefix of each parameter names managed by this parameter set."
   value       = var.path
