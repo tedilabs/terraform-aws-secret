@@ -2,6 +2,11 @@ locals {
   parameter = try(aws_ssm_parameter.this[0], aws_ssm_parameter.self[0])
 }
 
+output "region" {
+  description = "The AWS region this module resources resides in."
+  value       = local.parameter.region
+}
+
 output "arn" {
   description = "The ARN of the parameter."
   value       = local.parameter.arn
