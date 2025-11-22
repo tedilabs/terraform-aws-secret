@@ -1,3 +1,10 @@
+variable "region" {
+  description = "(Optional) The region in which to create the module resources. If not provided, the module resources will be created in the provider's configured region."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
 variable "default_parameter_tier" {
   description = "(Optional) The parameter tier to use by default when a request to create or update a parameter does not specify a tier. The intended type of the secret. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`. Defaults to `STANDARD`."
   type        = string

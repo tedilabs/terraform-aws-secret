@@ -8,11 +8,13 @@ locals {
 }
 
 data "aws_caller_identity" "this" {}
-data "aws_region" "this" {}
+data "aws_region" "this" {
+  region = var.region
+}
 
 locals {
   account_id = data.aws_caller_identity.this.account_id
-  region     = data.aws_region.this.name
+  region     = data.aws_region.this.region
 
   parameter_tiers = {
     "STANDARD"            = "Standard"
@@ -34,6 +36,8 @@ locals {
 
 resource "aws_ssm_service_setting" "this" {
   for_each = local.settings
+
+  region = var.region
 
   setting_id    = "${local.setting_id_prefix}/${each.key}"
   setting_value = each.value
