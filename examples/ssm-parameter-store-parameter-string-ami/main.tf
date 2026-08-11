@@ -25,7 +25,7 @@ data "aws_ami" "ubuntu" {
 module "ami" {
   source = "../../modules/ssm-parameter-store-parameter"
   # source  = "tedilabs/secret/aws//modules/ssm-parameter-store-parameter"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   name        = "/ami/ubuntu/22.04"
   description = "Managed by Terraform."

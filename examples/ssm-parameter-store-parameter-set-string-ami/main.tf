@@ -40,7 +40,7 @@ data "aws_ami" "ubuntu_jammy" {
 module "ami" {
   source = "../../modules/ssm-parameter-store-parameter-set"
   # source  = "tedilabs/secret/aws//modules/ssm-parameter-store-parameter-set"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   path = "/ami/ubuntu"
   parameters = [

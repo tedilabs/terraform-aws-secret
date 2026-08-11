@@ -15,7 +15,7 @@ locals {
 module "key" {
   source = "../../modules/kms-key"
   # source  = "tedilabs/secret/aws//modules/kms-key"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   region = "us-east-1"
 
@@ -45,7 +45,7 @@ module "key" {
 module "replica" {
   source = "../../modules/kms-replica-key"
   # source  = "tedilabs/secret/aws//modules/kms-replica-key"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   for_each = toset(["ap-northeast-1", "ap-northeast-2"])
 

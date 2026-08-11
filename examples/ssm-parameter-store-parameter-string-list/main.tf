@@ -13,7 +13,7 @@ locals {
 module "standard" {
   source = "../../modules/ssm-parameter-store-parameter"
   # source  = "tedilabs/secret/aws//modules/ssm-parameter-store-parameter"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   name        = "/example/string-list/standard"
   description = "Managed by Terraform."
@@ -31,7 +31,7 @@ module "standard" {
 module "advanced" {
   source = "../../modules/ssm-parameter-store-parameter"
   # source  = "tedilabs/secret/aws//modules/ssm-parameter-store-parameter"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   name        = "/example/string-list/advanced"
   description = "Managed by Terraform."
@@ -49,7 +49,7 @@ module "advanced" {
 module "intelligent" {
   source = "../../modules/ssm-parameter-store-parameter"
   # source  = "tedilabs/secret/aws//modules/ssm-parameter-store-parameter"
-  # version = "~> 0.3.0"
+  # version = "~> 0.7.0"
 
   name        = "/example/string-list/intelligent"
   description = "Managed by Terraform."
