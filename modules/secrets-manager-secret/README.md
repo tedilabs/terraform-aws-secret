@@ -11,26 +11,26 @@ This module creates following resources.
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.12 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.12 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.22.0 |
+| ---- | ------- |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.12 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | tedilabs/misc/aws//modules/resource-group | ~> 0.12.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_secretsmanager_secret.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_policy) | resource |
 | [aws_secretsmanager_secret_rotation.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_rotation) | resource |
@@ -40,7 +40,7 @@ This module creates following resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_name"></a> [name](#input\_name) | (Required) Friendly name of the new secret. The secret name can consist of uppercase letters, lowercase letters, digits, and any of the following characters: `/_+=.@-`. | `string` | n/a | yes |
 | <a name="input_binary_value"></a> [binary\_value](#input\_binary\_value) | (Optional) The secret value in base64-encoded binary that you want to encrypt and store in the current version of the secret. Only used if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform. | `string` | `null` | no |
 | <a name="input_block_public_policy"></a> [block\_public\_policy](#input\_block\_public\_policy) | (Optional) Whether to reject calls to PUT a resource policy if the policy allows public access. Defaults to `true`. | `bool` | `true` | no |
@@ -63,7 +63,7 @@ This module creates following resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the Secrets Manager secret. |
 | <a name="output_deletion_window_in_days"></a> [deletion\_window\_in\_days](#output\_deletion\_window\_in\_days) | Duration in days after which the secret is deleted after destruction of the resource. |
 | <a name="output_description"></a> [description](#output\_description) | The description of the secret. |
