@@ -8,7 +8,7 @@ This module creates following resources.
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.12 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.12 |
 
@@ -19,7 +19,7 @@ No providers.
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | tedilabs/misc/aws//modules/resource-group | ~> 0.12.0 |
 | <a name="module_this"></a> [this](#module\_this) | ../ssm-parameter-store-parameter | n/a |
 
@@ -30,7 +30,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_parameters"></a> [parameters](#input\_parameters) | (Required) A list of parameters to manage in the parameter set. Each value of `parameters` block as defined below.<br/>    (Required) `name` - The name of the parameter. This is concatenated with the `path` of the parameter set for the id. The name should begin with slash (/) and end without trailing slash.<br/>    (Optional) `description` - The description of the parameter.<br/>    (Optional) `tier` - The parameter tier to assign to the parameter. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`.<br/>    (Optional) `type` - The intended type of the parameter. Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`.<br/>    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format.<br/>    (Optional) `allowed_pattern` - A regular expression used to validate the parameter value.<br/>    (Required) `value` - The value of the parameter. | <pre>list(object({<br/>    name            = string<br/>    description     = optional(string)<br/>    tier            = optional(string)<br/>    type            = optional(string)<br/>    data_type       = optional(string)<br/>    allowed_pattern = optional(string)<br/>    value           = string<br/>  }))</pre> | n/a | yes |
 | <a name="input_path"></a> [path](#input\_path) | (Required) A path used for the prefix of each parameter name created by this parameter set. The path should begin with slash (/) and end without trailing slash. | `string` | n/a | yes |
 | <a name="input_allowed_pattern"></a> [allowed\_pattern](#input\_allowed\_pattern) | (Optional) The default regular expression used to validate each parameter value in the parameter set. This is only used when a specific pattern for the parameter is not provided. For example, for `STRING` types with values restricted to numbers, you can specify `^d+$`. | `string` | `""` | no |
@@ -47,7 +47,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_parameters"></a> [parameters](#output\_parameters) | The list of parameters in the parameter set. |
 | <a name="output_path"></a> [path](#output\_path) | The path used for the prefix of each parameter names managed by this parameter set. |
 | <a name="output_region"></a> [region](#output\_region) | The AWS region this module resources resides in. |
