@@ -55,4 +55,8 @@ module "this" {
     local.module_tags,
     var.tags,
   )
+
+  telemetry = {
+    enabled = false
+  }
 }
