@@ -115,7 +115,6 @@ data "aws_iam_policy_document" "predefined" {
         "kms:Delete*",
         "kms:TagResource",
         "kms:UntagResource",
-        "kms:ScheduleKeyDeletion",
         "kms:CancelKeyDeletion",
         "kms:ReplicateKey",
         "kms:ImportKeyMaterial",
