@@ -142,7 +142,7 @@ variable "predefined_policies" {
   (Optional) A configuration for predefined policies of the replica key. This configuration will be merged with given `policy` if it is defined. Each item of `predefined_policies` block as defined below.
     (Required) `role` - The predefined role to be applied to the replica key. Valid values are `OWNER`, `ADMINISTRATOR`, `USER`, `SERVICE_USER`, `SYMMETRIC_ENCRYPTION`, `ASYMMETRIC_ENCRYPTION`, `ASYMMETRIC_SIGNING`, or `HMAC`.
       `OWNER` - Full access to the replica key, including permission to modify the key policy and delete the key.
-      `ADMINISTRATOR` - Administrative access to the replica key, including permission to modify the key policy, but not permission to delete the key.
+      `ADMINISTRATOR` - Administrative access to the replica key, including permission to modify the key policy and delete the key, but not permission to use the key for cryptographic operations.
       `USER` - Access to use the replica key for cryptographic operations, but not administrative permissions.
       `SERVICE_USER` - Access for AWS services to use the replica key for cryptographic operations on your behalf.
       `SYMMETRIC_ENCRYPTION` - Access to use the replica key for symmetric encryption and decryption operations.
