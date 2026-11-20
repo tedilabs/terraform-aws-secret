@@ -89,9 +89,9 @@ locals {
 
 resource "aws_secretsmanager_secret_version" "latest" {
   count = anytrue([
-    var.binary_value != null,
-    var.text_value != null,
-    length(var.kv_value) > 0,
+    var.type == "BINARY" && var.binary_value != null,
+    var.type == "TEXT" && var.text_value != null,
+    var.type == "KEY_VALUE" && length(var.kv_value) > 0,
   ]) ? 1 : 0
 
   region = var.region
