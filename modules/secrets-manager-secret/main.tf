@@ -70,7 +70,13 @@ locals {
   versions = [
     for version in var.versions :
     merge(version, {
-      id = var.type == "KEY_VALUE" ? md5(jsonencode(version.kv_value)) : md5(version.text_value != null ? version.text_value : "")
+      id = (var.type == "KEY_VALUE"
+        ? md5(jsonencode(version.kv_value))
+        : (var.type == "BINARY"
+          ? md5(version.binary_value)
+          : md5(version.text_value != null ? version.text_value : "")
+        )
+      )
 
       value = (var.type == "KEY_VALUE"
         ? jsonencode(version.kv_value)
