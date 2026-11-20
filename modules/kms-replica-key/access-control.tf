@@ -42,7 +42,7 @@ resource "aws_kms_grant" "this" {
 ###################################################
 
 resource "aws_kms_key_policy" "this" {
-  count = try(length(jsondecode(data.aws_iam_policy_document.this.json)["Statement"]) > 0 ? 1 : 0, 0)
+  count = length(var.predefined_policies) > 0 || var.policy != null ? 1 : 0
 
   region = var.region
 
