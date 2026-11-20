@@ -68,6 +68,8 @@ resource "aws_ssm_parameter" "this" {
 resource "aws_ssm_parameter" "self" {
   count = var.ignore_value_changes ? 1 : 0
 
+  region = var.region
+
   name        = var.name
   description = var.description
   tier        = var.tier != null ? local.tiers[var.tier] : null
