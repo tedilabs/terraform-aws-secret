@@ -65,9 +65,9 @@ This module creates following resources.
 | <a name="output_name"></a> [name](#output\_name) | The name of the parameter. |
 | <a name="output_region"></a> [region](#output\_region) | The AWS region this module resources resides in. |
 | <a name="output_resource_group"></a> [resource\_group](#output\_resource\_group) | The resource group created to manage resources in this module. |
-| <a name="output_secret_value"></a> [secret\_value](#output\_secret\_value) | The secure value of the parameter. argument is valid with a type of `SECURE_STRING`. |
+| <a name="output_secret_value"></a> [secret\_value](#output\_secret\_value) | The secure value of the parameter. This attribute is valid with a type of `SECURE_STRING`. |
 | <a name="output_tier"></a> [tier](#output\_tier) | The tier of the parameter. |
 | <a name="output_type"></a> [type](#output\_type) | The type of the parameter. |
-| <a name="output_value"></a> [value](#output\_value) | The value of the parameter. argument is not valid with a type of `SECURE_STRING`. |
+| <a name="output_value"></a> [value](#output\_value) | The value of the parameter. This attribute is not valid with a type of `SECURE_STRING`. |
 | <a name="output_version"></a> [version](#output\_version) | The current version of the parameter. |
 <!-- END_TF_DOCS -->

@@ -18,7 +18,7 @@ variable "name" {
 }
 
 variable "aliases" {
-  description = "(Optional) A set of display name of the alias. The name must start with the word ``alias/`."
+  description = "(Optional) A set of display name of the alias. The name must start with the word `alias/`."
   type        = set(string)
   default     = []
   nullable    = false
