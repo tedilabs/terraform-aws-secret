@@ -63,7 +63,7 @@ variable "data_type" {
 }
 
 variable "allowed_pattern" {
-  description = "(Optional) The default regular expression used to validate each parameter value in the parameter set. This is only used when a specific pattern for the parameter is not provided. For example, for `STRING` types with values restricted to numbers, you can specify `^d+$`."
+  description = "(Optional) The default regular expression used to validate each parameter value in the parameter set. This is only used when a specific pattern for the parameter is not provided. For example, for `STRING` types with values restricted to numbers, you can specify `^\\d+$`."
   type        = string
   default     = ""
   nullable    = false

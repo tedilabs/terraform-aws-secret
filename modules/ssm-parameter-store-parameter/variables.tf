@@ -58,7 +58,7 @@ variable "data_type" {
 }
 
 variable "allowed_pattern" {
-  description = "(Optional) A regular expression used to validate the parameter value. For example, for `STRING` types with values restricted to numbers, you can specify `^d+$`."
+  description = "(Optional) A regular expression used to validate the parameter value. For example, for `STRING` types with values restricted to numbers, you can specify `^\\d+$`."
   type        = string
   default     = ""
   nullable    = false
