@@ -131,7 +131,7 @@ variable "parameters" {
 }
 
 variable "ignore_value_changes" {
-  description = "(Optional) Whether to manage the parameter value with Terraform. Ignore changes of `value` or `secret_value` if true. Defaults to `false`."
+  description = "(Optional) Whether to stop managing the parameter value with Terraform after creation. Ignore changes of `value` or `secret_value` if true. Defaults to `false`."
   type        = bool
   default     = false
   nullable    = false
