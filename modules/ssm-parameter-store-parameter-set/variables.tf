@@ -51,14 +51,14 @@ variable "type" {
 }
 
 variable "data_type" {
-  description = "(Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format. Defaults to `text`. `aws:ssm:integration` data_type parameters must be of the type `SECURE_STRING` and the name must start with the prefix `/d9d01087-4a3f-49e0-b0b4-d568d7826553/ssm/integrations/webhook/`."
+  description = "(Optional) The default data type of parameters in the parameter set. Only required when `type` is `STRING`. This is only used when a specific data type of the parameter is not provided. Valid values are `text`, `aws:ec2:image` for AMI format. Defaults to `text`. `aws:ssm:integration` is not supported because it requires the `SECURE_STRING` type."
   type        = string
   default     = "text"
   nullable    = false
 
   validation {
-    condition     = contains(["text", "aws:ssm:integration", "aws:ec2:image"], var.data_type)
-    error_message = "Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image`."
+    condition     = contains(["text", "aws:ec2:image"], var.data_type)
+    error_message = "Valid values are `text`, `aws:ec2:image`. Not support `aws:ssm:integration`."
   }
 }
 
@@ -76,7 +76,7 @@ variable "parameters" {
     (Optional) `description` - The description of the parameter.
     (Optional) `tier` - The parameter tier to assign to the parameter. Valid values are `STANDARD`, `ADVANCED` or `INTELLIGENT_TIERING`.
     (Optional) `type` - The intended type of the parameter. Valid values are `STRING`, `STRING_LIST`. Not support `SECURE_STRING`.
-    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image` for AMI format.
+    (Optional) `data_type` - The data type of the parameter. Only required when `type` is `STRING`. Valid values are `text`, `aws:ec2:image` for AMI format.
     (Optional) `allowed_pattern` - A regular expression used to validate the parameter value.
     (Required) `value` - The value of the parameter.
   EOF
@@ -123,10 +123,10 @@ variable "parameters" {
   validation {
     condition = alltrue([
       for parameter in var.parameters :
-      contains(["text", "aws:ssm:integration", "aws:ec2:image"], parameter.data_type)
+      contains(["text", "aws:ec2:image"], parameter.data_type)
       if parameter.data_type != null
     ])
-    error_message = "Valid values are `text`, `aws:ssm:integration`, `aws:ec2:image`."
+    error_message = "Valid values are `text`, `aws:ec2:image`. Not support `aws:ssm:integration`."
   }
 }
 
