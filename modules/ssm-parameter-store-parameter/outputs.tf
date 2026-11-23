@@ -54,12 +54,12 @@ output "allowed_pattern" {
 }
 
 output "value" {
-  description = "The value of the parameter. argument is not valid with a type of `SECURE_STRING`."
+  description = "The value of the parameter. This attribute is not valid with a type of `SECURE_STRING`."
   value       = local.parameter.insecure_value
 }
 
 output "secret_value" {
-  description = "The secure value of the parameter. argument is valid with a type of `SECURE_STRING`."
+  description = "The secure value of the parameter. This attribute is valid with a type of `SECURE_STRING`."
   value       = local.parameter.value
   sensitive   = true
 }
