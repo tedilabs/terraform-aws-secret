@@ -31,21 +31,21 @@ variable "type" {
 }
 
 variable "binary_value" {
-  description = "(Optional) The secret value in base64-encoded binary that you want to encrypt and store in the current version of the secret. Only used if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  description = "(Optional) The secret value in base64-encoded binary that you want to encrypt and store in the current version of the secret. Only used if `type` is `BINARY`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version even after the resource is deleted from Terraform."
   type        = string
   default     = null
   nullable    = true
 }
 
 variable "kv_value" {
-  description = "(Optional) The secret value in key/value that you want to encrypt and store in the current version of the secret. Only used if `type` is `KEY_VALUE`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  description = "(Optional) The secret value in key/value that you want to encrypt and store in the current version of the secret. Only used if `type` is `KEY_VALUE`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version even after the resource is deleted from Terraform."
   type        = map(string)
   default     = {}
   nullable    = false
 }
 
 variable "text_value" {
-  description = "(Optional) The secret value in text that you want to encrypt and store in the current version of the secret. Only used if `type` is `TEXT`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version event after the resource is deleted from Terraform."
+  description = "(Optional) The secret value in text that you want to encrypt and store in the current version of the secret. Only used if `type` is `TEXT`. The `aws_secretsmanager_secret_version` resource is deleted from Terraform if you set the value to `null`. However, `AWSCURRENT` staging label is still active on the version even after the resource is deleted from Terraform."
   type        = string
   default     = null
   nullable    = true
@@ -54,7 +54,7 @@ variable "text_value" {
 variable "versions" {
   description = <<EOF
   (Optional) A list of versions other than `AWSCURRENT` version of the Secrets Manager secret. Each value of `versions` block as defined below.
-    (Optioinal) `text_value` - The secret value in text that you want to encrypt and store in this version of the secret. Only used if `type` is `TEXT`.
+    (Optional) `text_value` - The secret value in text that you want to encrypt and store in this version of the secret. Only used if `type` is `TEXT`.
     (Optional) `kv_value` - The secret value in key/value that you want to encrypt and store in this version of the secret. Only used if `type` is `KEY_VALUE`.
     (Optional) `binary_value` - The secret value in base64-encoded binary that you want to encrypt and store in this version of the secret. Only used if `type` is `BINARY`.
     (Required) `labels` - A set of staging labels that are attached to this version of the secret. A staging label must be unique to a single version of the secret. If you specify a staging label that's already associated with a different version of the same secret then that staging label is automatically removed from the other version and attached to this version.
@@ -159,7 +159,7 @@ variable "rotation" {
   description = <<EOF
   (Optional) A rotation configurations of the Secrets Manager secret. `rotation` block as defined below.
     (Optional) `enabled` - Whether to enable automatic rotation of the secret. Defaults to `false`.
-    (Optionial) `rotate_immediately` - Whether to rotate the secret immediately or wait until the next scheduled rotation window. The rotation schedule is defined in rotation_rules. For secrets that use a Lambda rotation function to rotate, if you don't immediately rotate the secret, Secrets Manager tests the rotation configuration by running the testSecret step. Defaults to `true`.
+    (Optional) `rotate_immediately` - Whether to rotate the secret immediately or wait until the next scheduled rotation window. The rotation schedule is defined in rotation_rules. For secrets that use a Lambda rotation function to rotate, if you don't immediately rotate the secret, Secrets Manager tests the rotation configuration by running the testSecret step. Defaults to `true`.
     (Optional) `lambda_function` - The ARN of the Lambda function that can rotate the secret.
     (Optional) `schedule_frequency` - The number of days between automatic scheduled rotations of the secret. Either `schedule_frequency` or `schedule_expression` must be specified.
     (Optional) `schedule_expression` - A cron expression such as `cron(a b c d e f)` or a rate expression such as `rate(10 days)`. Either `schedule_frequency` or `schedule_expression` must be specified.

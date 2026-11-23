@@ -93,7 +93,7 @@ variable "key_rotation" {
   description = <<EOF
   (Optional) A configuration for key rotation of the KMS key. This configuration is only applicable for symmetric encryption KMS keys. `key_rotation` block as defined below.
     (Optional) `enabled` - Whether key rotation is enabled. Defaults to `false`.
-    (Optional) `period_in_days` - The custom period of t ime between each key rotation. Valid value is between `90` and `2560` days (inclusive). Defaults to `365`.
+    (Optional) `period_in_days` - The custom period of time between each key rotation. Valid value is between `90` and `2560` days (inclusive). Defaults to `365`.
   EOF
   type = object({
     enabled        = optional(bool, false)
