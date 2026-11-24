@@ -322,7 +322,9 @@ variable "shares" {
   description = <<EOF
   (Optional) A list of resource shares via RAM (Resource Access Manager). Each block of `shares` as defined below.
     (Required) `name` - The name of the resource share. The name of the RAM resource share is generated with the name of the KMS key as a prefix.
-    (Optional) `permissions` - A set of the names or ARNs of the RAM permissions to associate with the resource share. Defaults to `["AWSRAMPermissionKMSKeySymmetricEncryption"]`, the AWS RAM default permission for symmetric encryption. For signing, HMAC, or other operations, specify a compatible customer managed permission ARN.
+    (Optional) `permissions` - A set of the names or ARNs of the RAM permissions to associate with the resource share. Defaults to `["AWSRAMPermissionKMSKeySymmetricEncryption"]`. For signing, HMAC, or other operations, specify a compatible customer managed permission ARN. The following AWS managed permissions are available for KMS keys:
+      `AWSRAMPermissionKMSKeySymmetricEncryption` - Allows symmetric encryption operations, viewing the key and its grants, and grant creation by integrated AWS services on behalf of consumers. Use this default permission when consumers need symmetric encryption with the shared key.
+      `AWSRAMPermissionKMSKeyLockoutResistant` - Allows only the root user of the account that owns the key to describe the key, list its information, and view or replace its key policy. Use this to preserve the key owner's ability to recover control of the key policy.
     (Optional) `external_principals_allowed` - Whether principals outside your organization can be associated with the resource share. Defaults to `false`.
     (Optional) `principals` - A set of principals to associate with the resource share. Possible values are an AWS account ID, an ARN of an organization in AWS Organizations, an ARN of an organizational unit (OU) in AWS Organizations, or an ARN of an IAM role or user. Defaults to `[]`.
     (Optional) `tags` - A map of tags to add to the resource share. Defaults to `{}`.
