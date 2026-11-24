@@ -111,6 +111,18 @@ output "aliases" {
   }
 }
 
+output "sharing" {
+  description = <<EOF
+  The configuration for sharing of the KMS key.
+    `status` - An indication of whether the KMS key is shared through this module. Values are `NOT_SHARED` or `SHARED_BY_ME`.
+    `shares` - The map of resource shares via RAM (Resource Access Manager), keyed by share name.
+  EOF
+  value = {
+    status = length(module.share) > 0 ? "SHARED_BY_ME" : "NOT_SHARED"
+    shares = module.share
+  }
+}
+
 output "resource_group" {
   description = "The resource group created to manage resources in this module."
   value = merge(
